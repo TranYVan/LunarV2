@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export const NotFoundPage = () => {
-  return (
-    <div>NotFoundPage</div>
-  )
+    return (
+        <div>
+            Not FOund
+        </div>
+    )
 }
