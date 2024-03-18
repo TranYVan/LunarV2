@@ -48,6 +48,7 @@ public class User implements UserDetails {
     private String avatar;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(15) default 'USER'")
     private Role role;
 
     @OneToMany(mappedBy = "customer")
@@ -56,6 +57,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
+
     }
 
     @Override

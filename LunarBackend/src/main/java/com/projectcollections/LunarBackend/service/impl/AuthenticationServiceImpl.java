@@ -3,6 +3,7 @@ package com.projectcollections.LunarBackend.service.impl;
 import com.projectcollections.LunarBackend.controller.auth.AuthenticationRequest;
 import com.projectcollections.LunarBackend.controller.auth.AuthenticationResponse;
 import com.projectcollections.LunarBackend.controller.auth.RegisterRequest;
+import com.projectcollections.LunarBackend.domain.model.Role;
 import com.projectcollections.LunarBackend.domain.model.User;
 import com.projectcollections.LunarBackend.repository.UserRepository;
 import com.projectcollections.LunarBackend.service.AuthenticationService;
@@ -22,7 +23,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
-        System.out.println(request);
+
         var user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
@@ -32,7 +33,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .address(request.getAddress())
                 .city(request.getCity())
                 .country(request.getCountry())
+                .role(Role.USER)
                 .build();
+
+        System.out.println(user);
 
         userRepository.save(user);
         var jwtToken =jwtService.generateToken(user);
