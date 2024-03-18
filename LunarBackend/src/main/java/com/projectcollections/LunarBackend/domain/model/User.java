@@ -1,7 +1,5 @@
 package com.projectcollections.LunarBackend.domain.model;
 
-
-import com.projectcollections.LunarBackend.domain.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -44,8 +42,6 @@ public class User implements UserDetails {
     @Size(min = 10, max = 10)
     private String phone;
 
-    @NotNull
-    private boolean isAdmin;
     private String address;
     private String city;
     private String country;
