@@ -23,6 +23,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
+        Role role = Role.USER;
+        if (request.getRole() != null) {
+            role = Role.valueOf(request.getRole());
+        }
 
         var user = User.builder()
                 .fullName(request.getFullName())
@@ -33,7 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .address(request.getAddress())
                 .city(request.getCity())
                 .country(request.getCountry())
-                .role(Role.valueOf(request.getRole()))
+                .role(role)
                 .build();
 
         System.out.println(user);

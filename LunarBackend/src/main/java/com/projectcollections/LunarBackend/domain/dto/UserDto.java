@@ -24,7 +24,6 @@ public class UserDto {
     private String fullName;
     private LocalDate birthdate;
     private String email;
-    private String password;
     private String phone;
     private String address;
     private String city;

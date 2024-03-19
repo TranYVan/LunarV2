@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Column(columnDefinition = "varchar(15) default 'USER'")
     private Role role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders;
 
     @Override
