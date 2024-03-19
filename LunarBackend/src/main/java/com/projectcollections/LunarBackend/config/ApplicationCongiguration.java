@@ -18,10 +18,6 @@ public class ApplicationCongiguration {
 
     private final UserDetailsService userDetailsService;
 
-//    public ApplicationCongiguration(UserDetailsService userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider= new DaoAuthenticationProvider();

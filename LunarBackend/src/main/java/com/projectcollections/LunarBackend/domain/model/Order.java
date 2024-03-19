@@ -24,8 +24,8 @@ public class Order {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private User customer;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotBlank
     private String customerPhone;
@@ -42,7 +42,7 @@ public class Order {
     @NotNull
     private String paymentMethod;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderItem> items;
 
     private Float discount;
