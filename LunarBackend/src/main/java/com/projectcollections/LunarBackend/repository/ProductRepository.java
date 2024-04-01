@@ -1,4 +1,7 @@
 package com.projectcollections.LunarBackend.repository;
 
-public interface ProductRepository {
+import com.projectcollections.LunarBackend.domain.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }

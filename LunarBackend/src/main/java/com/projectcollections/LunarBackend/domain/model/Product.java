@@ -28,7 +28,7 @@ public class Product {
     @NotNull
     private String thumbnail;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="categoryId")
     private Category category;
 
