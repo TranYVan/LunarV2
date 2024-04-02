@@ -24,7 +24,7 @@ public class UserController {
 
 //    private final ObjectMapper objectMapper;
 
-    @GetMapping
+    @GetMapping(path = "/get-all")
     @JsonView(Views.ExternalView.class)
     public Page<User> getAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -37,7 +37,7 @@ public class UserController {
         return users;
     }
 
-    @PostMapping
+    @PostMapping(path = "/create")
     @JsonView(Views.ExternalView.class)
     public ResponseEntity<User> create(
             @RequestBody @JsonView(Views.InternalView.class) User user
@@ -47,7 +47,7 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "/email={email}")
+    @GetMapping(path = "/details/email={email}")
     @JsonView(Views.ExternalView.class)
     public ResponseEntity<?> getUserByEmail(
             @PathVariable("email") String email

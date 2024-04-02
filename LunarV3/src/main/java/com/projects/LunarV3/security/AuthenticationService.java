@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     public AuthenticationResponse register(RegisterRequest request) {
 
         var user = User
@@ -43,7 +44,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new ApplicationContextException("User Role is not available"));
 
         user.setRoles(Collections.singleton(userRole));
-
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         UserPrincipal userPrincipal = UserPrincipal.create(user);

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public Page<User> findAll(int pageNumber, int pageSize, String sortColumn, boolean isAscending) {
         Pageable pageable = isAscending ?
                 PageRequest.of(pageNumber, pageSize, Sort.by(sortColumn).ascending()) :
@@ -36,6 +39,7 @@ public class UserService {
         Set<Role> roleSet = getRoleSet(user);
 
         user.setRoles(roleSet);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         return savedUser;
     }
@@ -48,7 +52,9 @@ public class UserService {
         user.setRoles(roleSet);
         return userRepository.findById(id).map(existingUser -> {
 
-            Optional.ofNullable(user.getPassword()).ifPresent(existingUser::setPassword);
+            Optional.ofNullable(user.getPassword()).ifPresent(password -> {
+                existingUser.setPassword(bCryptPasswordEncoder.encode(password));
+            });
             Optional.ofNullable(user.getFullName()).ifPresent(existingUser::setFullName);
             Optional.ofNullable(user.getBirthday()).ifPresent(existingUser::setBirthday);
             Optional.ofNullable(user.getAvatar()).ifPresent(existingUser::setAvatar);
@@ -93,7 +99,4 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
-//    public void addRole(Role role, User user) {
-//        userRepository
-//    }
 }
