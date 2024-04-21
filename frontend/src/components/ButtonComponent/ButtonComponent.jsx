@@ -6,14 +6,18 @@ export const ButtonComponent = ({
   styleButton,
   styleTextButton,
   textButton,
+  disabled,
   ...rests
 }) => {
   return (
     <Button
-      size={size}
+      style={{
+        ...styleButton,
+        background: disabled ? '#ccc' : styleButton.backgroundColor
+      }}
+      size={size} 
       // icon={<SearchOutlined style={{ color: colorButton }} />}
-      {...rests}
-      style={styleButton}>
+      {...rests}>
       <span style={styleTextButton}>{textButton}</span>
     </Button>
   );

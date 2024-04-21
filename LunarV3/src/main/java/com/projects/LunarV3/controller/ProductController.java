@@ -3,6 +3,8 @@ package com.projects.LunarV3.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.projects.LunarV3.domain.Views;
 import com.projects.LunarV3.domain.model.Product;
+import com.projects.LunarV3.exception.ObjectAlreadyExistsException;
+import com.projects.LunarV3.exception.ObjectNotFoundException;
 import com.projects.LunarV3.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,10 +25,13 @@ public class ProductController {
     public ResponseEntity<?> createProduct(
             @RequestBody @JsonView(Views.InternalView.class) Product product
     ) {
-        System.out.println(product);
-        Product createdProduct = productService.save(product);
+        try {
+            Product createdProduct = productService.save(product);
+            return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+        } catch (ObjectAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
 
-        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -49,18 +54,16 @@ public class ProductController {
             @PathVariable UUID id,
             @RequestBody @JsonView(Views.UpdateView.class) Product product
     ) {
-        System.out.println("ID: " + id);
-        System.out.println(product);
-        if (!productService.isProductExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            product.setId(id);
+            Product updatedProduct = productService.partialUpdate(id, product);
+            return new ResponseEntity<>(updatedProduct,
+                    HttpStatus.OK);
+
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
 
-        product.setId(id);
-
-        Product updatedProduct = productService.partialUpdate(id, product);
-
-        return new ResponseEntity<>(updatedProduct,
-                HttpStatus.OK);
     }
 
     @DeleteMapping
@@ -81,10 +84,13 @@ public class ProductController {
     public ResponseEntity<?> getById(
             @PathVariable UUID id
     ) {
+        try {
+            Product product = productService.findById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(product);
 
-        return productService.findById(id).map(product -> {
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 }

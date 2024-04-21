@@ -3,6 +3,8 @@ package com.projects.LunarV3.service;
 import com.projects.LunarV3.domain.model.Role;
 import com.projects.LunarV3.domain.model.RoleName;
 import com.projects.LunarV3.domain.model.User;
+import com.projects.LunarV3.exception.UserAlreadyExistsException;
+import com.projects.LunarV3.exception.UsernameNotFoundException;
 import com.projects.LunarV3.repository.RoleRepository;
 import com.projects.LunarV3.repository.UserRepository;
 import com.projects.LunarV3.utils.JsonPage;
@@ -36,8 +38,12 @@ public class UserService {
     }
 
     public User save(User user) {
-        Set<Role> roleSet = getRoleSet(user);
 
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException(user.getEmail() + " already exists");
+        }
+
+        Set<Role> roleSet = getRoleSet(user);
         user.setRoles(roleSet);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
@@ -45,11 +51,11 @@ public class UserService {
     }
 
     public User partialUpdate(Long id, User user) {
-        user.setId(id);
-        System.out.println("user:: " + user);
-        Set<Role> roleSet = getRoleSet(user);
 
+        user.setId(id);
+        Set<Role> roleSet = getRoleSet(user);
         user.setRoles(roleSet);
+
         return userRepository.findById(id).map(existingUser -> {
 
             Optional.ofNullable(user.getPassword()).ifPresent(password -> {
@@ -61,10 +67,9 @@ public class UserService {
             Optional.ofNullable(user.getPhone()).ifPresent(existingUser::setPhone);
             Optional.ofNullable(user.getRoles()).ifPresent(existingUser::setRoles);
 
-            System.out.println("Existing User: " + existingUser);
             return userRepository.save(existingUser);
 
-        }).orElseThrow(() -> new RuntimeException("User does not exist"));
+        }).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     private Set<Role> getRoleSet(User user) {
@@ -84,15 +89,15 @@ public class UserService {
                 roleSet.add(fetchedRole.get());
             }
 
-            System.out.println(role);
         });
         return roleSet;
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        System.out.println("EMAIL: " + email);
-        System.out.println(userRepository.findByEmail(email));
-        return userRepository.findByEmail(email);
+    public User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
     }
 
     public boolean isUserExists(Long id) {

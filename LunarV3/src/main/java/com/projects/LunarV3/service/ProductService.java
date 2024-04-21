@@ -2,6 +2,7 @@ package com.projects.LunarV3.service;
 
 import com.projects.LunarV3.domain.model.Product;
 import com.projects.LunarV3.domain.model.User;
+import com.projects.LunarV3.exception.ObjectNotFoundException;
 import com.projects.LunarV3.repository.ProductRepository;
 import com.projects.LunarV3.utils.JsonPage;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,9 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public Product save(Product product) {
+        if (productRepository.existsByName(product.getName())) {
+            throw new ObjectNotFoundException(product.getName() + "has already existed");
+        }
         return productRepository.save(product);
     }
 
@@ -37,6 +41,11 @@ public class ProductService {
     }
 
     public void deleteById(UUID id) {
+
+        if (!productRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Product " + id + " Not Found");
+        }
+
         productRepository.deleteById(id);
     }
 
@@ -56,10 +65,15 @@ public class ProductService {
                     Optional.ofNullable(product.getCategory()).ifPresent(existingProduct::setCategory);
 
                     return productRepository.save(existingProduct);
-                }).orElseThrow(() -> new RuntimeException("Product does not exists"));
+                }).orElseThrow(() -> new ObjectNotFoundException("Product Not Found"));
     }
 
-    public Optional<Product> findById(UUID id) {
-        return productRepository.findById(id);
+    public Product findById(UUID id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new ObjectNotFoundException("Product " + id + " Not Found");
+        }
+        return product.get();
+
     }
 }

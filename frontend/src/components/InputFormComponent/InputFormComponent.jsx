@@ -1,12 +1,16 @@
 import { Input } from 'antd';
-import React, { useState } from 'react'
+import React from 'react'
 
 const InputFormComponent = (props) => {
-  const [valueInput, setValueInput] = useState('')
-  const { placeholder = "Fill in here", ...rests } = props;
+
+  const { placeholder = "Fill in here",  ...rests } = props;
+  const handleOnChangeInput = (e) => {
+    props.onChange(e.target.value);
+  }
 
   return (
-    <Input placeholder={placeholder} valueinput={valueInput}
+    <Input placeholder={placeholder} value={props.value}
+      onChange={handleOnChangeInput}
       style={{
         marginBottom: "10px",
       }}

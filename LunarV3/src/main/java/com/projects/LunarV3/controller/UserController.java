@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projects.LunarV3.domain.Views;
 import com.projects.LunarV3.domain.model.User;
+import com.projects.LunarV3.exception.UserAlreadyExistsException;
+import com.projects.LunarV3.exception.UsernameNotFoundException;
 import com.projects.LunarV3.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,9 +22,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-//    private final Mapper<User, UserDto> mapper;
-
-//    private final ObjectMapper objectMapper;
 
     @GetMapping(path = "/get-all")
     @JsonView(Views.ExternalView.class)
@@ -39,12 +38,17 @@ public class UserController {
 
     @PostMapping(path = "/create")
     @JsonView(Views.ExternalView.class)
-    public ResponseEntity<User> create(
+    public ResponseEntity<?> create(
             @RequestBody @JsonView(Views.InternalView.class) User user
     ) {
-        System.out.println(user);
-        User createdUser = userService.save(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+
+        try {
+            User createdUser = userService.save(user);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch(UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
     }
 
     @GetMapping(path = "/details/email={email}")
@@ -52,10 +56,15 @@ public class UserController {
     public ResponseEntity<?> getUserByEmail(
             @PathVariable("email") String email
     ) {
-        Optional<User> user = userService.getUserByEmail(email);
-        return user.map(entity -> {
-            return new ResponseEntity<>(entity, HttpStatus.OK);
-        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            User user = userService.getUserByEmail(email);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error fetching user", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @PatchMapping(path = "/id={id}")
@@ -64,16 +73,17 @@ public class UserController {
             @PathVariable("id") Long id,
             @RequestBody @JsonView(Views.UpdateView.class) User user
     ) {
-        if (!userService.isUserExists(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            user.setId(id);
+            User updatedUser = userService.partialUpdate(id, user);
+
+            return new ResponseEntity<>(
+                    updatedUser,
+                    HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
 
-        user.setId(id);
-        User updatedUser = userService.partialUpdate(id, user);
-
-        return new ResponseEntity<>(
-                updatedUser,
-                HttpStatus.OK);
     }
 
 }

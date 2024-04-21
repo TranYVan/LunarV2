@@ -1,5 +1,6 @@
 package com.projects.LunarV3.config;
 
+import com.projects.LunarV3.security.JwtAuthEntryPoint;
 import com.projects.LunarV3.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
@@ -37,14 +38,18 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(
+                        exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
                 .authorizeHttpRequests((authorize) ->authorize
                         .requestMatchers("/api/v1/auth/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "api/v1/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "api/v1/products/**").hasRole("ADMIN")
@@ -54,7 +59,6 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "api/v1/users/get-all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "api/v1/users/create").hasRole("ADMIN")
-
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -65,15 +69,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        // Don't do this in production, use a proper list  of allowed origins
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -94,5 +100,4 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-
 }

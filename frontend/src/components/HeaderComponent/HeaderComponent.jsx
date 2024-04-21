@@ -1,5 +1,5 @@
 import { Row, Col, Button, Badge } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import {
   WrapperHeader,
   WrapperHeaderAccount,
@@ -14,9 +14,16 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { SearchInputComponent } from "../SearchInputComponent/SearchInputComponent";
+import { useNavigate } from "react-router-dom";
 
 //===
 export const HeaderComponent = () => {
+  const navigate = useNavigate();
+
+  const handleNavigationSignIn = () => {
+    navigate("/sign-in");  
+  }
+
   return (
     <div
       style={{
@@ -42,7 +49,7 @@ export const HeaderComponent = () => {
           <WrapperHeaderAccount>
             <UserOutlined style={{ fontSize: "30px" }} />
 
-            <div>
+            <div onClick={handleNavigationSignIn} style={{cursor: "pointer"}}>
               <WrapperTextHeaderSmall>Sign in / Sign up</WrapperTextHeaderSmall>
               <div>
                 <WrapperTextHeaderSmall>Your account</WrapperTextHeaderSmall>

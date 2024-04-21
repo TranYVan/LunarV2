@@ -1,11 +1,13 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import { DefaultComponent } from "./components/DefaultComponent/DefaultComponent";
+import axios from "axios";
+import { useQuery } from "react-query";
+
 
 function App() {
-  
-  
+
   return (
     <div>
       

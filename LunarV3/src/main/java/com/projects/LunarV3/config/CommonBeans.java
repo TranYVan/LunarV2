@@ -26,5 +26,4 @@ public class CommonBeans {
         return mapper;
     }
 
-
 }
