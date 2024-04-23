@@ -14,10 +14,12 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { DatePicker } from 'antd';
 import { validateSignUpForm } from '../../utils/FormValidation';
 dayjs.extend(customParseFormat);
-import * as message from '../../components/MessageComponent/Message'
+// import Message from "../../components/MessageComponent/Message";
+// import {success, error, warning } from "../../components/MessageComponent/Message";
+import { message } from 'antd';
 
 const SignUpPage = () => {
-
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,13 +36,22 @@ const SignUpPage = () => {
   console.log('mutation: ', mutation);
   
   const {data, isLoading, isError, isSuccess} = mutation;
-
+  console.log(isSuccess, isError, isErr);
   useEffect(() => {
-    if (isSuccess) {
-      message.success();
+    if (isSuccess == true) {
+      
+      messageApi.open({
+        type: "success",
+        content: "success"
+      });
+      
       handleNavigateSignIn();
-    } else if (isError || isErr) {
-      message.error();
+    } else if (isError == true || isErr == true) {
+      console.log('hehe');
+      messageApi.open({
+        type: "error",
+        content: "error"
+      })
     }
   }, [isSuccess, isError, isErr]);
 
@@ -102,6 +113,7 @@ const SignUpPage = () => {
         background: "#fff",
         height: "100vh",
       }}>
+      {contextHolder}
       <WrapperSignInContainer
         style={{
           width: "800px",

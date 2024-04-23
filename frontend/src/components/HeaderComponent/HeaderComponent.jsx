@@ -15,15 +15,16 @@ import {
 } from "@ant-design/icons";
 import { SearchInputComponent } from "../SearchInputComponent/SearchInputComponent";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 //===
 export const HeaderComponent = () => {
   const navigate = useNavigate();
-
+  const user = useSelector((state) => state.user);
   const handleNavigationSignIn = () => {
-    navigate("/sign-in");  
-  }
-
+    navigate("/sign-in");
+  };
+  console.log(user);
   return (
     <div
       style={{
@@ -31,7 +32,8 @@ export const HeaderComponent = () => {
         display: "flex",
         justifyContent: "center",
         background: "#F4CE14",
-      }}>
+      }}
+    >
       <WrapperHeader>
         <Col span={5}>
           <WrapperTextHeader>LUNAR</WrapperTextHeader>
@@ -45,17 +47,26 @@ export const HeaderComponent = () => {
         </Col>
         <Col
           // span={6}
-          style={{ display: "flex", gap: "54px", alignItems: "center" }}>
+          style={{ display: "flex", gap: "54px", alignItems: "center" }}
+        >
           <WrapperHeaderAccount>
             <UserOutlined style={{ fontSize: "30px" }} />
-
-            <div onClick={handleNavigationSignIn} style={{cursor: "pointer"}}>
-              <WrapperTextHeaderSmall>Sign in / Sign up</WrapperTextHeaderSmall>
-              <div>
-                <WrapperTextHeaderSmall>Your account</WrapperTextHeaderSmall>
-                <DownOutlined />
+            {user?.name ? (
+              <div style={{ cursor: "pointer" }}>{user.name}</div>
+            ) : (
+              <div
+                onClick={handleNavigationSignIn}
+                style={{ cursor: "pointer" }}
+              >
+                <WrapperTextHeaderSmall>
+                  Sign in / Sign up
+                </WrapperTextHeaderSmall>
+                <div>
+                  <WrapperTextHeaderSmall>Your account</WrapperTextHeaderSmall>
+                  <DownOutlined />
+                </div>
               </div>
-            </div>
+            )}
           </WrapperHeaderAccount>
           <div>
             <Badge count={4} size="small">

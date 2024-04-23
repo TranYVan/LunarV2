@@ -59,6 +59,7 @@ public class UserController {
         try {
             User user = userService.getUserByEmail(email);
             return new ResponseEntity<>(user, HttpStatus.OK);
+
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
