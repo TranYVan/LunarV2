@@ -1,10 +1,11 @@
-import { Row, Col, Button, Badge } from "antd";
+import { Row, Col, Button, Badge, Popover } from "antd";
 import React, { useState } from "react";
 import {
   WrapperHeader,
   WrapperHeaderAccount,
   WrapperTextHeader,
   WrapperTextHeaderSmall,
+  WrapperContentPopUp
 } from "./style";
 import { Input } from "antd";
 const { Search } = Input;
@@ -15,16 +16,34 @@ import {
 } from "@ant-design/icons";
 import { SearchInputComponent } from "../SearchInputComponent/SearchInputComponent";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { resetUser } from '../../redux/slides/usersSlide';
+import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
 //===
 export const HeaderComponent = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const user = useSelector((state) => state.user);
   const handleNavigationSignIn = () => {
     navigate("/sign-in");
   };
-  console.log(user);
+  const handleLogOut = async() => {
+    setLoading(true);
+    dispatch(resetUser());
+    setLoading(false);
+  }
+  const content = (
+    <div>
+      <WrapperContentPopUp onClick={handleLogOut}>Log Out</WrapperContentPopUp>
+      <WrapperContentPopUp>Your Profile</WrapperContentPopUp>
+    </div>
+  );
+  const dispatch = useDispatch();
+
+  
+
   return (
     <div
       style={{
@@ -49,25 +68,31 @@ export const HeaderComponent = () => {
           // span={6}
           style={{ display: "flex", gap: "54px", alignItems: "center" }}
         >
-          <WrapperHeaderAccount>
-            <UserOutlined style={{ fontSize: "30px" }} />
-            {user?.name ? (
-              <div style={{ cursor: "pointer" }}>{user.name}</div>
-            ) : (
-              <div
-                onClick={handleNavigationSignIn}
-                style={{ cursor: "pointer" }}
-              >
-                <WrapperTextHeaderSmall>
-                  Sign in / Sign up
-                </WrapperTextHeaderSmall>
-                <div>
-                  <WrapperTextHeaderSmall>Your account</WrapperTextHeaderSmall>
-                  <DownOutlined />
+          <LoadingComponent isLoading={loading}>
+            <WrapperHeaderAccount>
+              <UserOutlined style={{ fontSize: "30px" }} />
+              {user?.name ? (
+                <>
+                  <Popover placement="bottomRight" content={content}>
+                    <div style={{ cursor: "pointer" }}>{user.name}</div>
+                  </Popover>
+                </>
+              ) : (
+                <div
+                  onClick={handleNavigationSignIn}
+                  style={{ cursor: "pointer" }}
+                >
+                  <WrapperTextHeaderSmall>
+                    Sign in / Sign up
+                  </WrapperTextHeaderSmall>
+                  <div>
+                    <WrapperTextHeaderSmall>Your account</WrapperTextHeaderSmall>
+                    <DownOutlined />
+                  </div>
                 </div>
-              </div>
-            )}
-          </WrapperHeaderAccount>
+              )}
+            </WrapperHeaderAccount>
+          </LoadingComponent>
           <div>
             <Badge count={4} size="small">
               <ShoppingCartOutlined
