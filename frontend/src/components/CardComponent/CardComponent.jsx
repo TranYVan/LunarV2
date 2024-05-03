@@ -1,23 +1,39 @@
 import React from "react";
 import { Card } from "antd";
-import { StyleNameProduct, WrapperAmountSoldText, WrapperCard, WrapperPrice } from "./style";
+import {
+  StyleNameProduct,
+  WrapperAmountSoldText,
+  WrapperCard,
+  WrapperDiscount,
+  WrapperPrice,
+} from "./style";
 const { Meta } = Card;
 
-export const CardComponent = () => {
+export const CardComponent = (props) => {
+  const { countInStock, key ,description, name, price, type, sold, discount, image } = props;
+
   return (
     <WrapperCard
       hoverable
-      bodyStyle={{ padding: "12px" }}
-      style={{ width: 240 }}
+      styles={{ header: { width: "200px", height: "200px" }, body: {padding: "10px"} }}
+      style={{ width: 200 }}
       cover={
         <img
+          
           alt="example"
-          src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+          src={image}
         />
-      }>
-      <StyleNameProduct>Iphone 12</StyleNameProduct>
-      <WrapperAmountSoldText>Sold: 210</WrapperAmountSoldText>
-      <WrapperPrice>27,800,000đ</WrapperPrice>
+      }
+      key={key}
+    >
+
+      <StyleNameProduct>{name}</StyleNameProduct>
+      <WrapperAmountSoldText>Sold: {sold}</WrapperAmountSoldText>
+      <WrapperPrice>       
+        <span>{price}$</span>
+        {/* {(discount && discount > 0) && (<WrapperDiscount>{discount}%</WrapperDiscount>)} */}
+        {discount && discount > 0? (<WrapperDiscount>{discount}%</WrapperDiscount>) : ''}
+      </WrapperPrice>
     </WrapperCard>
   );
-}
+};

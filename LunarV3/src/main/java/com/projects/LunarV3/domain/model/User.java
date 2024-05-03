@@ -53,13 +53,14 @@ public class User extends DateAudit {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private LocalDate birthday;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private String phone;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Column(columnDefinition = "TEXT")
     private String avatar;
 
 }

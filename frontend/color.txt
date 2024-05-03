@@ -1,0 +1,4 @@
+Yellow: #F4CE14
+White: #F5F7F8
+Dark Green: #495E57
+Black: #45474B

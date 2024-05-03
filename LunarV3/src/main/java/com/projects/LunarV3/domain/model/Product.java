@@ -5,10 +5,7 @@ import com.projects.LunarV3.domain.Views;
 import com.projects.LunarV3.domain.model.audit.UserDateAudit;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -45,10 +42,31 @@ public class Product extends UserDateAudit {
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private Float discount;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Column(columnDefinition = "TEXT")
     private String thumbnails;
 
     @ManyToOne
     @JoinColumn(name = "categoryId", referencedColumnName = "id")
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private Category category;
+
+    public enum Status {
+        AVAILABLE("available"),
+        REMOVED("removed"),
+        UNAVAILABLE("unavailable");
+
+        private final String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

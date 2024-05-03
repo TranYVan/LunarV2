@@ -3,11 +3,11 @@ import styled from "styled-components";
 
 
 export const WrapperHeader = styled(Row)`
-  padding: 10px 0;
+  padding: 8px 0;
   background-color: #F4CE14;
   align-items: center;
   width: 1270px;
-  gap: 10px;
+  gap: 19px;
 `;
 
 export const WrapperTextHeader = styled.span`
@@ -32,7 +32,6 @@ export const WrapperTextHeaderSmall = styled.span`
 export const WrapperContentPopUp = styled.p`
   cursor: pointer;
   &:hover {
-    background: rgb(73, 94, 87);
-    color: #fff;
+    color: rgb(73, 94, 87);
   }
 `

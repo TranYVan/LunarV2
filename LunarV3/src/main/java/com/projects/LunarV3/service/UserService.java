@@ -53,8 +53,15 @@ public class UserService {
     public User partialUpdate(Long id, User user) {
 
         user.setId(id);
-        Set<Role> roleSet = getRoleSet(user);
-        user.setRoles(roleSet);
+        System.out.println("user: " + user);
+        if (user.getRoles() != null) {
+            Set<Role> roleSet = getRoleSet(user);
+
+//            System.out.println(roleSet);
+            if (roleSet != null) {
+                user.setRoles(roleSet);
+            }
+        }
 
         return userRepository.findById(id).map(existingUser -> {
 
@@ -66,7 +73,7 @@ public class UserService {
             Optional.ofNullable(user.getAvatar()).ifPresent(existingUser::setAvatar);
             Optional.ofNullable(user.getPhone()).ifPresent(existingUser::setPhone);
             Optional.ofNullable(user.getRoles()).ifPresent(existingUser::setRoles);
-
+            System.out.println("after" + existingUser.getRoles());
             return userRepository.save(existingUser);
 
         }).orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -104,4 +111,9 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
+    public User getUserById(Long id) {
+
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }

@@ -22,13 +22,18 @@ export const WrapperAmountSoldText = styled.div`
   color: #a2b5bb;
   display: flex;
   align-items: center;
+  margin-top: 8px;
 `;
 
 export const WrapperPrice = styled.div`
-  color: #45474b;
+  color: #cc0a2e;
   font-weight: 700;
-  white-space: nowrap;
-  line-height: 1;
   font-size: 14.4px;
-  margin: 8px 0;
+  margin-top: 5px;
+`;
+
+export const WrapperDiscount = styled.span`
+  font-weight: 500;
+  font-size: 12px;
+  margin-left: 15px;
 `;

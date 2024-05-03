@@ -14,8 +14,6 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { DatePicker } from 'antd';
 import { validateSignUpForm } from '../../utils/FormValidation';
 dayjs.extend(customParseFormat);
-// import Message from "../../components/MessageComponent/Message";
-// import {success, error, warning } from "../../components/MessageComponent/Message";
 import { message } from 'antd';
 
 const SignUpPage = () => {

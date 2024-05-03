@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Arrays;
 
@@ -40,7 +41,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
-    private static final Long MAX_AGE = 3600L;
+    private static final Long MAX_AGE = 7200L;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -52,10 +53,12 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/v1/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "api/v1/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "api/v1/products/**").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/v1/categories/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "api/v1/users/get-all").hasRole("ADMIN")
@@ -75,17 +78,19 @@ public class SecurityConfig {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         // Don't do this in production, use a proper list  of allowed origins
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        config.addAllowedOrigin("http://localhost:5173");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT
         ));
         config.setAllowedMethods(Arrays.asList(
+                HttpMethod.OPTIONS.name(),
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name()
+                HttpMethod.DELETE.name(),
+                HttpMethod.PATCH.name()
         ));
         config.setMaxAge(MAX_AGE);
         source.registerCorsConfiguration("/**", config);

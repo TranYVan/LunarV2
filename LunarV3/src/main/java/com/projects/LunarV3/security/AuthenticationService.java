@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -69,6 +70,7 @@ public class AuthenticationService {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
+        claims.put("id", userPrincipal.getId());
 
         var token = jwtService.generateToken(claims, userPrincipal);
         return AuthenticationResponse.builder()
@@ -86,13 +88,16 @@ public class AuthenticationService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        var user = userDetailsService.loadUserByUsername(request.getEmail());
+        UserDetails user = userDetailsService.loadUserByUsername(request.getEmail());
+        User user1 = userRepository.findByEmail(user.getUsername()).get();
+
         List<String> roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority).toList();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", roles);
+        claims.put("id", user1.getId());
         token = jwtService.generateToken(claims, user);
 
         return AuthenticationResponse

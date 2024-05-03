@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,12 +28,25 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<Product> findAll(int page, int size, String sortAttribute, boolean isAsc) {
+    public Page<Product> findAll(int page, int size, String sortAttribute, boolean isAsc, List<String> filters) {
         Pageable pageable = isAsc ?
                 PageRequest.of(page, size, Sort.by(sortAttribute).ascending()) :
                 PageRequest.of(page, size, Sort.by(sortAttribute).descending());
 
-        return new JsonPage<Product>(productRepository.findAll(pageable), pageable);
+        if (filters == null || filters.size() != 2) {
+            return new JsonPage<Product>(productRepository.findAllByStatus(Product.Status.AVAILABLE, pageable), pageable);
+        }
+        System.out.println(filters);
+
+        return switch (filters.get(0)) {
+            case "name" ->
+                    new JsonPage<Product>(productRepository.findAllByStatusAndNameLike(Product.Status.AVAILABLE, "%" + filters.get(1) + "%", pageable), pageable);
+//                    new JsonPage<Product>(productRepository.findAllByNameLike("%" + filters.get(1) + "%", pageable), pageable);
+            case "type" ->
+                    new JsonPage<Product>(productRepository.findAllByStatusAndCategoryName(Product.Status.AVAILABLE, filters.get(1), pageable), pageable);
+            default ->
+                    new JsonPage<Product>(productRepository.findAllByStatus(Product.Status.AVAILABLE, pageable), pageable);
+        };
 
     }
 
@@ -74,6 +88,25 @@ public class ProductService {
             throw new ObjectNotFoundException("Product " + id + " Not Found");
         }
         return product.get();
+    }
 
+    public void softDelete(UUID id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw  new ObjectNotFoundException("Product " + id + " Not Found");
+        }
+        Product product1 = product.get();
+        product1.setStatus(Product.Status.REMOVED);
+        productRepository.save(product1);
+    }
+
+    public void softDeleteMany(List<UUID> ids) {
+        try {
+            List<Product> products =productRepository.findAllById(ids);
+            products.forEach(product -> product.setStatus(Product.Status.REMOVED));
+            productRepository.saveAll(products);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -40,10 +41,11 @@ public class ProductController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "6") int size,
             @RequestParam(value = "sortAttribute", required = false,defaultValue = "name") String sortAttribute,
-            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortOrder
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortOrder,
+            @RequestParam(value = "filter", required = false) List<String> filters
     ) {
         boolean isAsc = sortOrder.equals("asc");
-        Page<Product> products = productService.findAll(page, size, sortAttribute, isAsc);
+        Page<Product> products = productService.findAll(page, size, sortAttribute, isAsc, filters);
 
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
@@ -66,7 +68,7 @@ public class ProductController {
 
     }
 
-    @DeleteMapping
+    @DeleteMapping(path = "/id={id}")
     public ResponseEntity<?> deleteById(
             @PathVariable UUID id
     ) {
@@ -74,9 +76,21 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        productService.deleteById(id);
+        productService.softDelete(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/delete-many")
+    public ResponseEntity<?> deleteMany(@RequestBody List<UUID> ids) {
+        System.out.println(ids);
+        try {
+            productService.softDeleteMany(ids);
+            return ResponseEntity.status(HttpStatus.OK).body("Delete Successfully");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping(path = "/id={id}")

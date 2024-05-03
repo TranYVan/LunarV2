@@ -32,4 +32,24 @@ public class Category extends DateAudit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
     private List<Product> products;
+
+    public enum Status {
+        AVAILABLE("available"),
+        REMOVED("removed"),
+        UNAVAILABLE("unavailable");
+
+        private final String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

@@ -1,5 +1,6 @@
 import { Row, Col, Button, Badge, Popover } from "antd";
-import React, { useState } from "react";
+import Icon from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
 import {
   WrapperHeader,
   WrapperHeaderAccount,
@@ -19,13 +20,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUser } from '../../redux/slides/usersSlide';
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
+import Logo from "../Logo/Logo";
+import { searchProduct } from "../../redux/slides/productsSlide";
 
 //===
-export const HeaderComponent = () => {
+export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const user = useSelector((state) => state.user);
+  const [userAvatar, setUserAvatar] = useState('');
+  const [search, setSearch] = useState('');
+
   const handleNavigationSignIn = () => {
     navigate("/sign-in");
   };
@@ -33,16 +39,30 @@ export const HeaderComponent = () => {
     setLoading(true);
     dispatch(resetUser());
     setLoading(false);
+    navigate("/");
+  }
+  const handleNavigateProfle = async()=> {
+    navigate("/profile-user");
   }
   const content = (
     <div>
       <WrapperContentPopUp onClick={handleLogOut}>Log Out</WrapperContentPopUp>
-      <WrapperContentPopUp>Your Profile</WrapperContentPopUp>
+      <WrapperContentPopUp onClick={handleNavigateProfle}>Your Profile</WrapperContentPopUp>
+      {user?.roles.some((role) => role.name === "ROLE_ADMIN") &&  (
+          <WrapperContentPopUp onClick={() => navigate('/system/admin')}>System Management</WrapperContentPopUp>
+      )}
     </div>
   );
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setUserAvatar(user?.avatar);
+  }, [user?.avatar]);
   
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    dispatch(searchProduct(e.target.value));
+  }
 
   return (
     <div
@@ -53,28 +73,46 @@ export const HeaderComponent = () => {
         background: "#F4CE14",
       }}
     >
-      <WrapperHeader>
-        <Col span={5}>
-          <WrapperTextHeader>LUNAR</WrapperTextHeader>
+      <WrapperHeader style={{justifyContent: isHiddenCart && isHiddenSearch? 'space-between': 'unset' }}>
+        <Col span={4} onClick={() => {
+          navigate('/')
+        }}>
+          <Logo style={{maxHeight: '55px'}}/>
+          
         </Col>
-        <Col span={13}>
-          <SearchInputComponent
-            size="large"
-            placeholder="Find anything you want"
-            textButton="Search"
-          />
-        </Col>
+        {!isHiddenSearch && (
+          <Col span={13}>
+            <SearchInputComponent
+              onChange={onSearch}
+              size="large"
+              placeholder="Find anything you want"
+              textButton="Search"
+              
+            />
+          </Col>
+        )}
+        
         <Col
-          // span={6}
-          style={{ display: "flex", gap: "54px", alignItems: "center" }}
+          style={{ display: "flex", gap: "59px", alignItems: "center" }}
         >
           <LoadingComponent isLoading={loading}>
             <WrapperHeaderAccount>
-              <UserOutlined style={{ fontSize: "30px" }} />
-              {user?.name ? (
+              {userAvatar && userAvatar !== 'null' && userAvatar !== 'undefined' && userAvatar.length > 0? (
+                <img src={userAvatar} alt="header-avatar"
+                  style={{
+                    height: "50px",
+                    width: "50px",
+                    borderRadius: "50%",
+                    objectFit: "cover"
+                  }}
+                />
+              ) : (
+                <UserOutlined style={{ fontSize: "30px" }} />
+              )}
+              {user?.access_token ? (
                 <>
                   <Popover placement="bottomRight" content={content}>
-                    <div style={{ cursor: "pointer" }}>{user.name}</div>
+                    <div style={{ cursor: "pointer" }}>{user.name || user.email || 'User'}</div>
                   </Popover>
                 </>
               ) : (
@@ -93,14 +131,16 @@ export const HeaderComponent = () => {
               )}
             </WrapperHeaderAccount>
           </LoadingComponent>
-          <div>
+          {!isHiddenCart && (
+            <div>
             <Badge count={4} size="small">
               <ShoppingCartOutlined
                 style={{ fontSize: "32px", color: "#45474B" }}
-              />
+                />
             </Badge>
             <span>Cart</span>
           </div>
+          )}
         </Col>
       </WrapperHeader>
     </div>

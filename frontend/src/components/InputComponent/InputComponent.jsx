@@ -6,7 +6,6 @@ export const InputComponent = ({size, placeholder, style, ...rests}) => {
     <Input
       size={size}
       placeholder={placeholder}
-      bordered={false}
       style={style}
       {...rests}
     />
