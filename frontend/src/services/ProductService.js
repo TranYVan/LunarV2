@@ -1,11 +1,11 @@
 import axios from "axios";
 import { getHeader } from "../utils/Utils";
 
-export const getAllProducts = async (search, page = 0, size = 8) => {
+export const getAllProducts = async (search, page = 0, size = 10) => {
   let res = {};
   
   try {
-    if (search.length > 0) {
+    if (search?.length > 0) {
       res = await axios.get(
         `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}&filter=name&filter=${search}`);
     } else {

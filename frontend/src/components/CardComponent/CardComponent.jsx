@@ -15,11 +15,11 @@ export const CardComponent = (props) => {
   return (
     <WrapperCard
       hoverable
-      styles={{ header: { width: "200px", height: "200px" }, body: {padding: "10px"} }}
-      style={{ width: 200 }}
+      styles={{ header: { width: "250px", height: "220px" }, body: {padding: "10px"} }}
+      style={{ width: "241px" }}
       cover={
         <img
-          
+          style={{height: "50%"}}
           alt="example"
           src={image}
         />
@@ -30,9 +30,9 @@ export const CardComponent = (props) => {
       <StyleNameProduct>{name}</StyleNameProduct>
       <WrapperAmountSoldText>Sold: {sold}</WrapperAmountSoldText>
       <WrapperPrice>       
-        <span>{price}$</span>
+        <span>{price.toLocaleString()}$</span>
         {/* {(discount && discount > 0) && (<WrapperDiscount>{discount}%</WrapperDiscount>)} */}
-        {discount && discount > 0? (<WrapperDiscount>{discount}%</WrapperDiscount>) : ''}
+        {discount && discount > 0? (<WrapperDiscount>-{discount}%</WrapperDiscount>) : ''}
       </WrapperPrice>
     </WrapperCard>
   );

@@ -38,6 +38,7 @@ const AdminProduct = () => {
     description: "",
     price: "",
     stockQuantity: "",
+    discount: "",
     type: {
       id: "",
       name: "",
@@ -49,6 +50,7 @@ const AdminProduct = () => {
     description: "",
     price: "",
     stockQuantity: "",
+    discount: "",
     type: {
       id: "",
       name: "",
@@ -73,6 +75,7 @@ const AdminProduct = () => {
         
         name: res?.name,
         description: res?.description,
+        discount: res?.discount,
         price: res?.cost,
         stockQuantity: res?.stockQuantity,
         type: {
@@ -142,7 +145,7 @@ const AdminProduct = () => {
   };
 
   const mutation = useMutationHook((payload) => {
-    const { name, description, price, stockQuantity, type, image } = payload;
+    const { name, description, price, stockQuantity, type, image, discount } = payload;
     console.log(payload);
     const res = ProductService.createProduct({
       name: name,
@@ -151,13 +154,14 @@ const AdminProduct = () => {
       stockQuantity: parseInt(stockQuantity),
       category: type,
       thumbnails: image,
+      discount: parseFloat(discount)
     });
 
     return res;
   });
 
   const mutationUpdateProduct = useMutationHook((payload) => {
-    const { name, description, price, stockQuantity, type, image } = payload;
+    const { name, description, price, stockQuantity, type, image, discount } = payload;
     const res = ProductService.updateProduct(rowSelected, {
       name: name,
       description: description,
@@ -165,6 +169,7 @@ const AdminProduct = () => {
       stockQuantity: parseInt(stockQuantity),
       category: type,
       thumbnails: image,
+      discount: parseFloat(discount)
     });
     return res;
   });
@@ -199,6 +204,7 @@ const AdminProduct = () => {
       name: "",
       description: "",
       price: "",
+      discount: "",
       stockQuantity: "",
       type: {
         id: 0,
@@ -495,6 +501,11 @@ const AdminProduct = () => {
       },
     },
     {
+      title: "Discount",
+      dataIndex: "discount",
+      sorter: (a, b) => a.discount - b.discount
+    },
+    {
       title: "Stock Quantity",
       dataIndex: "stockQuantity",
       sorter: (a, b) => a.stockQuantity - b.stockQuantity,
@@ -665,6 +676,22 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
+              label="Discount"
+              name="discount"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the price",
+                },
+              ]}
+            >
+              <InputFormComponent
+                value={stateProduct?.discount}
+                onChange={handleOnChange}
+                name="discount"
+              />
+            </Form.Item>
+            <Form.Item
               label="Image"
               name="image"
               rules={[
@@ -816,6 +843,22 @@ const AdminProduct = () => {
                 value={stateProductDetail?.price}
                 onChange={handleOnChangeDetail}
                 name="price"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Discount"
+              name="discount"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the current stock quantity",
+                },
+              ]}
+            >
+              <InputFormComponent
+                value={stateProductDetail?.discount}
+                onChange={handleOnChangeDetail}
+                name="discount"
               />
             </Form.Item>
             <Form.Item

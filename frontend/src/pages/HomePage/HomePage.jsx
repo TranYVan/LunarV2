@@ -15,44 +15,30 @@ import { useDebounce } from "../../hooks/useDebounce";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
-  const searchDebounce = useDebounce(searchProduct, 1000);
-  const refSearch = useRef();
+  const searchDebounce = useDebounce(searchProduct, 500);
   const [loading, setLoading] = useState(false);
-  const [stateProducts, setStateProducts] = useState([]);
+
+  const [limit, setLimit] = useState(5);
 
   const arr = ["TV", "Refrigerator", "Phone"];
 
-  const fetchAllProducts = async (search) => {
-    const res = await ProductService.getAllProducts(search);
+  const fetchAllProducts = async (context) => {
+    setLoading(true);
+    console.log('context', context);
+    const limitt = context?.queryKey && context?.queryKey[1];
+    const search = context?.queryKey && context?.queryKey[2];
 
-    if (search?.length > 0 || refSearch.current) {
-      setStateProducts(res?.content);
-    } else {
-      return res;
-    }
+    const res = await ProductService.getAllProducts(search, 0 ,limitt);
+    setLoading(false);
+    return res;
   };
 
-  useEffect(() => {
-    if (refSearch.current) {
-      fetchAllProducts(searchDebounce);
-    }
-    refSearch.current = true;
-  }, [searchDebounce])
-
-  const {isLoading, data: products} = useQuery(
-    ["products"],
+  const {isLoading, data: products, isPreviousData} = useQuery(
+    ["products", limit, searchDebounce],
     fetchAllProducts,
-    { retry: 3, retryDelay: 1000 }
+    { retry: 3, retryDelay: 1000, keepPreviousData: true }
   );
-
-  useEffect(() => {
-    if (products?.content?.length > 0) {
-      setStateProducts(products?.content);
-    }
-  }, [products]);
-  
-  console.log('loading', isLoading, loading);
-
+  console.log('isPrevious', products)
   return (
     <LoadingComponent isLoading={isLoading || loading}>
       <div style={{ width: "1270px", margin: "0 auto" }}>
@@ -75,7 +61,7 @@ const HomePage = () => {
           }}
         >
           <WrapperProducts>
-            {stateProducts?.map((product) => {
+            {products?.content?.map((product) => {
               return (
                 <CardComponent
                   key={product?.id}
@@ -101,6 +87,7 @@ const HomePage = () => {
           >
             <WrapperButtonMore
               textButton="Load more"
+              disabled={products?.totalElements === products?.content?.length || !products?.hasNext}
               styleButton={{
                 backgroundColor: "#495E57",
                 border: "1px solid #fff",
@@ -112,6 +99,7 @@ const HomePage = () => {
                 fontWeight: "600",
                 fontSize: "16px",
               }}
+              onClick={() => setLimit((prev) => prev + 5)}
             />
           </div>
         </div>
