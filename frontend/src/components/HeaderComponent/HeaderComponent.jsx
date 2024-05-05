@@ -135,7 +135,8 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
             <div>
             <Badge count={4} size="small">
               <ShoppingCartOutlined
-                style={{ fontSize: "32px", color: "#45474B" }}
+                onClick={() => navigate('/order')}
+                style={{ fontSize: "32px", color: "#45474B", cursor:"pointer" }}
                 />
             </Badge>
             <span>Cart</span>

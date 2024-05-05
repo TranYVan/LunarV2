@@ -12,11 +12,13 @@ import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { useDebounce } from "../../hooks/useDebounce";
+import * as CategoryService from "../../services/CategoryService";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const [limit, setLimit] = useState(5);
 
@@ -24,7 +26,7 @@ const HomePage = () => {
 
   const fetchAllProducts = async (context) => {
     setLoading(true);
-    console.log('context', context);
+
     const limitt = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
 
@@ -38,13 +40,22 @@ const HomePage = () => {
     fetchAllProducts,
     { retry: 3, retryDelay: 1000, keepPreviousData: true }
   );
-  console.log('isPrevious', products)
+
+  const fetchAllCategories = async() => {  
+    const res = await CategoryService.getAllCategory();
+    setCategories(res);
+    return res;
+  }
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
   return (
     <LoadingComponent isLoading={isLoading || loading}>
       <div style={{ width: "1270px", margin: "0 auto" }}>
         <WrapperTypeProduct>
-          {arr.map((item) => {
-            return <TypeProductComponent name={item} key={item} />;
+          {categories.map((item) => {
+            return <TypeProductComponent name={item.name} key={item.name} />;
           })}
         </WrapperTypeProduct>
       </div>
@@ -73,6 +84,7 @@ const HomePage = () => {
                   sold={product?.soldQuantity}
                   discount={product?.discount}
                   image={product?.thumbnails}
+                  id={product?.id}
                 />
               );
             })}

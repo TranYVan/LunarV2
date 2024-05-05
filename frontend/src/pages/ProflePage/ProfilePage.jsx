@@ -38,6 +38,8 @@ const ProfilePage = () => {
   const [phone, setPhone] = useState(user.phone);
   const [birthday, setBirthday] = useState(user.birthday);
   const [avatar, setAvatar] = useState(user.avatar);
+  const [address, setAddress] = useState(user.address);
+
   const [isFrontendError, setIsFrontendError] = useState(false);
   const dispatch = useDispatch();
 
@@ -86,6 +88,10 @@ const ProfilePage = () => {
   const handleOnChangePhone = (e) => {
     setPhone(e.target.value);
   };
+  const handleOnChangeAddress = (e) => {
+    setAddress(e.target.value);
+  };
+
   const handleOnChangeBirthday = (value) => {
     if (!value) {
       setBirthday(null);
@@ -95,13 +101,11 @@ const ProfilePage = () => {
   };
 
   const handleOnChangeAvatar = async ({ fileList }) => {
-    
     const file = fileList[0];
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
     setAvatar(file.preview);
-
   };
 
   const handleUpdate = async () => {
@@ -119,6 +123,7 @@ const ProfilePage = () => {
         fullName: name,
         phone: phone,
         birthday: birthday,
+        address: address,
         avatar:
           avatar === undefined || avatar == null || avatar.length == 0
             ? null
@@ -172,6 +177,18 @@ const ProfilePage = () => {
               <WrapperEditIcon onClick={handleUpdate} />
             </WrapperInput>
             <WrapperInput>
+              <WrapperLabel htmlFor="address">Address</WrapperLabel>
+              <InputFormComponent
+                value={address}
+                style={{
+                  width: "450px",
+                }}
+                id="address"
+                onChange={handleOnChangeAddress }
+              />
+              <WrapperEditIcon onClick={handleUpdate} />
+            </WrapperInput>
+            <WrapperInput>
               <WrapperLabel htmlFor="birthday">Birthday</WrapperLabel>
               <DatePicker
                 id="birthday"
@@ -197,7 +214,7 @@ const ProfilePage = () => {
                       height: "70px",
                       width: "70px",
                       borderRadius: "50%",
-                      objectFit: "cover"
+                      objectFit: "cover",
                     }}
                     alt="avatar"
                   />
