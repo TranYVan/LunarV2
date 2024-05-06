@@ -3,29 +3,21 @@ import { getHeader } from "../utils/Utils";
 
 export const getAllProducts = async (search, page = 0, size = 10) => {
   let res = {};
-  
+
   try {
     if (search?.length > 0) {
       res = await axios.get(
-        `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}&filter=name&filter=${search}`);
+        `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}&filter=name&filter=${search}`
+      );
     } else {
       res = await axios.get(
-        `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}`);
+        `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}`
+      );
     }
     return res.data;
   } catch (e) {
     throw e;
   }
-  // try {
-  //   const res = await axios.get(
-  //     `${process.env.REACT_API_URL_BACKEND}/api/v1/products`
-  //   );
-  //   console.log('res ', res?.data);
-  //   return res.data;
-
-  // } catch (error) {
-  //   throw error;
-  // }
 };
 
 export const createProduct = async (product) => {
@@ -96,6 +88,19 @@ export const deleteManyProduct = async (data) => {
       }
     );
     return res.data;
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getAllProductsByCategory = async (category, page = 0, size = 10) => {
+  try {
+    if (category) {
+      const res = await axios.get(
+        `${process.env.REACT_API_URL_BACKEND}/api/v1/products?page=${page}&size=${size}&filter=type&filter=${category}`
+      );
+      return res;
+    }
   } catch (e) {
     throw e;
   }

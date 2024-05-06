@@ -26,7 +26,7 @@ export const CardComponent = (props) => {
         <img
           style={{height: "50%"}}
           alt="example"
-          src={image ? image: "https://danviet.mediacdn.vn/upload/4-2017/images/2017-10-12/Su-that-dang-sau-cai-chet-cua-nam-dien-vien-phim-JAV-gia-nhat-the-gioi-421-1507798304-width400height372.jpg"}
+          src={image ? image: "/lunar-logo-zip-file(1)/png/logo-color.png"}
         />
       }
       key={key}

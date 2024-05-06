@@ -76,6 +76,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
       <WrapperHeader style={{justifyContent: isHiddenCart && isHiddenSearch? 'space-between': 'unset' }}>
         <Col span={4} onClick={() => {
           navigate('/')
+          console.log('hello')
         }}>
           <Logo style={{maxHeight: '55px'}}/>
           
