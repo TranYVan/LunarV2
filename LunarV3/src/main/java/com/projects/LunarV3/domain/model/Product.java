@@ -1,5 +1,6 @@
 package com.projects.LunarV3.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.projects.LunarV3.domain.Views;
 import com.projects.LunarV3.domain.model.audit.UserDateAudit;
@@ -7,9 +8,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @Table(name = "products")
@@ -69,4 +73,8 @@ public class Product extends UserDateAudit {
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Collection<OrderedItems> orderItems = new ArrayList<>();
 }

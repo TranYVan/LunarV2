@@ -30,7 +30,7 @@ public class Category extends DateAudit {
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products;
 
     public enum Status {
