@@ -8,6 +8,7 @@ import com.projects.LunarV3.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class OrderController {
 
     @PostMapping
     @JsonView(Views.ExternalView.class)
+    @PreAuthorize("hasRole('ROLE_USER') and #id == principal.id")
     public ResponseEntity<?> create(@RequestBody @JsonView(Views.InternalView.class) Order order) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.saveOrder(order));
     }
@@ -36,6 +38,7 @@ public class OrderController {
 
     @GetMapping("/get-by-user-id/{id}")
     @JsonView(Views.ExternalView.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #id == principal.id)")
     public ResponseEntity<?> getAllByUserId(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllByUser(id));
@@ -48,6 +51,7 @@ public class OrderController {
 
     @GetMapping("/details/{id}")
     @JsonView(Views.ExternalView.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #id == principal.id)")
     public ResponseEntity<?> getDetail(@PathVariable UUID id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(orderService.getDetail(id));
@@ -60,6 +64,7 @@ public class OrderController {
 
     @PutMapping("/{id}")
     @JsonView(Views.ExternalView.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #id == principal.id)")
     public ResponseEntity<?> update(
             @PathVariable UUID id, @RequestBody
             @JsonView(Views.UpdateView.class) Order order) {

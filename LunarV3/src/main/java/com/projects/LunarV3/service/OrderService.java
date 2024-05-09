@@ -86,6 +86,7 @@ public class OrderService {
                         existingOrder.setIsPaid(true);
                         existingOrder.setPaidAt(LocalDateTime.now());
                     }
+                    
                     return orderRepository.save(existingOrder);
                 }).orElseThrow(() -> new ObjectNotFoundException("Order " + id + " not found!"));
     }

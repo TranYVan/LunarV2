@@ -63,6 +63,9 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "api/v1/users/get-all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "api/v1/users/create").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "api/v1/orders").hasRole("ADMIN")
+                        .requestMatchers("api/v1/orders/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
