@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from "./style";
 import { Checkbox, Col, Form, Row } from "antd";
@@ -6,8 +6,55 @@ import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { InputComponent } from "../../components/InputComponent/InputComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { WrapperInputNumber } from "../../components/ProductDetailComponent/style";
+import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from "../../redux/slides/orderSlide";
 
 const OrderPage = () => {
+
+  const order = useSelector((state)=>state.order);
+  const dispatch = useDispatch();
+  const [listChecked, setListChecked] = useState([])
+  console.log('order', order);
+
+  const handleChangeCount = (type, productId) => {
+    if (type === 'increase') {
+      dispatch(increaseAmount({ productId }))
+    } else {
+      dispatch(decreaseAmount({ productId }))
+    }
+  }
+  
+  const handleDeleteOrder = (productId) => {
+    dispatch(removeOrderProduct({productId}));
+  }
+
+  const onChange = (e) => {
+    if (listChecked.includes(e.target.value)) {
+      const newListChecked = listChecked.filter((item) => item !== e.target.value)
+      setListChecked(newListChecked)
+    } else {
+      setListChecked([...listChecked, e.target.value])
+    }
+  };
+
+  const handleOnchangeCheckAll = (e) => {
+    if (e.target.checked) {
+      const newListChecked = [];
+      order?.orderedItems?.forEach((item) => {
+        newListChecked.push(item?.product?.id);
+      })
+      setListChecked(newListChecked);
+    } else {
+      setListChecked([]);
+    }
+  }
+  const handleRemoveAllOrder = () => {
+    if (listChecked?.length > 1) {
+      dispatch(removeAllOrderProduct({ listChecked }))
+    }
+  }
+  
   return (
     <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
       <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
@@ -25,12 +72,11 @@ const OrderPage = () => {
             <WrapperStyleHeader>
               <span style={{ display: "inline-block", width: "390px" }}>
                 <Checkbox
-                  // onChange={handleOnchangeCheckAll}
-                  // checked={listChecked?.length === order?.orderItems?.length}
+                  onChange={handleOnchangeCheckAll}
+                  checked={listChecked?.length === order?.orderedItems?.length}
                 ></Checkbox>
                 <span style={{ marginLeft: "10px", fontSize: "15px" }}>
-                  {/* All ({order?.orderItems?.length} products) */}
-                  All
+                  Total ({order?.orderedItems?.length} products)
                 </span>
               </span>
               <div
@@ -46,12 +92,12 @@ const OrderPage = () => {
                 <span style={{ fontSize: "15px" }}>Total</span>
                 <DeleteOutlined
                   style={{ cursor: "pointer", fontSize: "15px" }}
-                  // onClick={handleRemoveAllOrder}
+                  onClick={handleRemoveAllOrder}
                 />
               </div>
             </WrapperStyleHeader>
             <WrapperListOrder>
-              {/* {order?.orderItems?.map((order) => {
+              {order?.orderedItems?.map((order) => {
                 return (
                   <WrapperItemOrder>
                     <div
@@ -64,11 +110,11 @@ const OrderPage = () => {
                     >
                       <Checkbox
                         onChange={onChange}
-                        value={order?.productID}
-                        checked={listChecked.includes(order?.productID)}
+                        value={order?.product?.id}
+                        checked={listChecked.includes(order?.product?.id)}
                       ></Checkbox>
                       <img
-                        src={order?.image}
+                        src={order?.product?.thumbnails}
                         style={{
                           width: "77px",
                           height: "79px",
@@ -83,7 +129,7 @@ const OrderPage = () => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {order?.productName}
+                        {order?.product?.name}
                       </div>
                     </div>
                     <div
@@ -96,7 +142,7 @@ const OrderPage = () => {
                     >
                       <span>
                         <span style={{ fontSize: "15px", color: "#242424" }}>
-                          {convertPrice(order?.price)}
+                        {order?.price}
                         </span>
                       </span>
                       <WrapperCountOrder>
@@ -107,7 +153,7 @@ const OrderPage = () => {
                             cursor: "pointer",
                           }}
                           onClick={() =>
-                            handleChangeCount("decrease", order?.productID)
+                            handleChangeCount("decrease", order?.product?.id)
                           }
                         >
                           <MinusOutlined
@@ -126,7 +172,7 @@ const OrderPage = () => {
                             cursor: "pointer",
                           }}
                           onClick={() =>
-                            handleChangeCount("increase", order?.productID)
+                            handleChangeCount("increase", order?.product?.id)
                           }
                         >
                           <PlusOutlined
@@ -141,16 +187,16 @@ const OrderPage = () => {
                           fontWeight: 500,
                         }}
                       >
-                        {convertPrice(order?.price * order?.amount)}
+                        {order?.price * order?.amount}
                       </span>
                       <DeleteOutlined
                         style={{ cursor: "pointer" }}
-                        onClick={() => handleDeleteOrder(order?.productID)}
+                        onClick={() => handleDeleteOrder(order?.product?.id)}
                       />
                     </div>
                   </WrapperItemOrder>
                 );
-              })} */}
+              })}
             </WrapperListOrder>
           </WrapperLeft>
           <WrapperRight>

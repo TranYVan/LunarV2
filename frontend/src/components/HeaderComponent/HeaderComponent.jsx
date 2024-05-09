@@ -31,6 +31,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
   const user = useSelector((state) => state.user);
   const [userAvatar, setUserAvatar] = useState('');
   const [search, setSearch] = useState('');
+  const order = useSelector((state) => state.order);
 
   const handleNavigationSignIn = () => {
     navigate("/sign-in");
@@ -134,7 +135,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
           </LoadingComponent>
           {!isHiddenCart && (
             <div>
-            <Badge count={4} size="small">
+            <Badge count={order?.orderedItems?.length} size="small">
               <ShoppingCartOutlined
                 onClick={() => navigate('/order')}
                 style={{ fontSize: "32px", color: "#45474B", cursor:"pointer" }}

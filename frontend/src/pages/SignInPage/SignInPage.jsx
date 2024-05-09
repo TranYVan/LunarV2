@@ -3,7 +3,7 @@ import InputFormComponent from "../../components/InputFormComponent/InputFormCom
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import { WrapperNormalText, WrapperSignInContainer } from "./style";
 import InputPasswordComponent from "../../components/InputFormComponent/InputPasswordComponent";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as UserService from "../../services/UserService";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
@@ -16,7 +16,8 @@ const SignInPage = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
-
+  const location = useLocation();
+  console.log('location ', location)
   const handleNavigateSignUp = () => {
     navigate("/sign-up");
   };
@@ -36,6 +37,7 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      
       messageApi.open({
         type: "success",
         content: "success",
@@ -53,7 +55,11 @@ const SignInPage = () => {
           handleGetDetailsUser(decoded?.sub, data?.token);
         }
       }
-      navigate("/");
+      if (location?.state) {
+        navigate(location?.state);
+      } else {
+        navigate("/");
+      }
     }
   }, [isSuccess]);
 
