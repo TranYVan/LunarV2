@@ -1,4 +1,4 @@
-LUNAR E-COMMERECE
+# LUNAR E-COMMERECE
 
 Technology used:
   * RESTful API: Spring Boot, Spring MVC, Spring Security, JPA
