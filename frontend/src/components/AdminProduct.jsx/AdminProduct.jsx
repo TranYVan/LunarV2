@@ -44,6 +44,7 @@ const AdminProduct = () => {
       name: "",
     },
     image: "",
+    rating: 0
   });
   const [stateProductDetail, setStateProductDetail] = useState({
     name: "",
@@ -56,6 +57,7 @@ const AdminProduct = () => {
       name: "",
     },
     image: "",
+    rating: 0
   });
 
   const fetchAllCategories = async () => {
@@ -64,7 +66,7 @@ const AdminProduct = () => {
   };
   
   const fetchAllProducts = async () => {
-    const res = await ProductService.getAllProducts();
+    const res = await ProductService.getAllProducts("", 0, -1);
     return res;
   };
   
@@ -72,7 +74,6 @@ const AdminProduct = () => {
     const res = await ProductService.getDetailProduct(rowSelected);
     if (res) {
       setStateProductDetail({
-        
         name: res?.name,
         description: res?.description,
         discount: res?.discount,
@@ -83,6 +84,7 @@ const AdminProduct = () => {
           name: res?.category?.name,
         },
         image: res?.thumbnails,
+        rating: res?.rating
       });
     }
   };
@@ -145,7 +147,7 @@ const AdminProduct = () => {
   };
 
   const mutation = useMutationHook((payload) => {
-    const { name, description, price, stockQuantity, type, image, discount } = payload;
+    const { name, description, price, stockQuantity, type, image, discount, rating } = payload;
     console.log(payload);
     const res = ProductService.createProduct({
       name: name,
@@ -154,6 +156,7 @@ const AdminProduct = () => {
       stockQuantity: parseInt(stockQuantity),
       category: type,
       thumbnails: image,
+      rating: rating,
       discount: parseFloat(discount)
     });
 
@@ -161,7 +164,7 @@ const AdminProduct = () => {
   });
 
   const mutationUpdateProduct = useMutationHook((payload) => {
-    const { name, description, price, stockQuantity, type, image, discount } = payload;
+    const { name, description, price, stockQuantity, type, image, discount, rating } = payload;
     const res = ProductService.updateProduct(rowSelected, {
       name: name,
       description: description,
@@ -169,6 +172,7 @@ const AdminProduct = () => {
       stockQuantity: parseInt(stockQuantity),
       category: type,
       thumbnails: image,
+      rating: parseFloat(rating),
       discount: parseFloat(discount)
     });
     return res;
@@ -211,6 +215,7 @@ const AdminProduct = () => {
         name: "",
       },
       image: "",
+      rating: 5
     });
 
     form.resetFields();
@@ -511,6 +516,11 @@ const AdminProduct = () => {
       sorter: (a, b) => a.stockQuantity - b.stockQuantity,
     },
     {
+      title: "Rating",
+      dataIndex: "rating"
+    }, 
+    
+    {
       title: "Type",
       dataIndex: ["category", "name"],
       filters: categories?.map(c => {
@@ -522,7 +532,7 @@ const AdminProduct = () => {
       onFilter: (value, record) => {
         console.log('pair ', value, record);
         const foundObject = categories.find((obj) => obj.name === value);
-        return record.category.name= foundObject.name;
+        return record?.category?.name === foundObject?.name;
       },
     },
     {
@@ -532,7 +542,12 @@ const AdminProduct = () => {
     },
   ];
 
-
+  const dataTable = productsQuery?.data?.content?.length && productsQuery?.data?.content?.map((product) => {
+    return {
+      ...product, key: product.id
+    };
+  });
+  console.log(dataTable)
   return (
     <div>
       {contextHolder}
@@ -552,8 +567,9 @@ const AdminProduct = () => {
           handleDeleteMany={handleDeleteManyProducts}
           isAllowDelete={true}
           columns={columns}
-          data={productsQuery?.data?.content}
+          data={dataTable}
           isLoading={productsQuery?.isLoading}
+          
           rowKey={(record) => record.id}
           onRow={(record, rowIndex) => {
             return {
@@ -689,6 +705,22 @@ const AdminProduct = () => {
                 value={stateProduct?.discount}
                 onChange={handleOnChange}
                 name="discount"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Rating"
+              name="rating"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the price",
+                },
+              ]}
+            >
+              <InputFormComponent
+                value={stateProduct?.rating}
+                onChange={handleOnChange}
+                name="rating"
               />
             </Form.Item>
             <Form.Item
@@ -859,6 +891,22 @@ const AdminProduct = () => {
                 value={stateProductDetail?.discount}
                 onChange={handleOnChangeDetail}
                 name="discount"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Rating"
+              name="rating"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the current rating",
+                },
+              ]}
+            >
+              <InputFormComponent
+                value={stateProductDetail?.rating}
+                onChange={handleOnChangeDetail}
+                name="rating"
               />
             </Form.Item>
             <Form.Item

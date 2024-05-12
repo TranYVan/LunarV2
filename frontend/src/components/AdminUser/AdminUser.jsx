@@ -292,7 +292,7 @@ const AdminUser = () => {
       [e.target.name]: e.target.value,
     });
   };
-  ('detail ', stateUserDetail);
+
   const handleOnChangeImageDetail = async ({ fileList }) => {
     const file = fileList[0];
     if (!file.url && !file.preview) {
@@ -822,16 +822,6 @@ const AdminUser = () => {
           </Form>
         </LoadingComponent>
       </DrawerComponent>
-      {/* <ModalComponent
-        title="Remove Product"
-        isOpen={isModalOpenDelete}
-        onCancel={handleCancelDelete}
-        // onOk={handleDeleteProduct}
-      >
-        <LoadingComponent isLoading={isLoadingDeleted}>
-          <div>Are you sure removing this product?</div>
-        </LoadingComponent>
-      </ModalComponent> */}
     </div>
   );
 };

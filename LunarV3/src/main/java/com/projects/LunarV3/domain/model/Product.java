@@ -46,6 +46,8 @@ public class Product extends UserDateAudit {
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private Float discount;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    private Float rating;
+    @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     @Column(columnDefinition = "TEXT")
     private String thumbnails;
 

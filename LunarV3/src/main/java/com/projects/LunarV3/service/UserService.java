@@ -74,6 +74,7 @@ public class UserService {
             Optional.ofNullable(user.getPhone()).ifPresent(existingUser::setPhone);
             Optional.ofNullable(user.getAddress()).ifPresent(existingUser::setAddress);
             Optional.ofNullable(user.getRoles()).ifPresent(existingUser::setRoles);
+            Optional.ofNullable(user.getCity()).ifPresent(existingUser::setCity);
             System.out.println("after" + existingUser.getRoles());
             return userRepository.save(existingUser);
 

@@ -59,10 +59,10 @@ public class User extends DateAudit {
     private LocalDate birthday;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private String phone;
-
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     private String address;
-
+    @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    private String city;
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
     @Column(columnDefinition = "TEXT")
     private String avatar;

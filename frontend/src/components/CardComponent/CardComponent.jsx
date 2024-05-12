@@ -8,6 +8,7 @@ import {
   WrapperPrice,
 } from "./style";
 import { useNavigate } from "react-router-dom";
+import { convertPrice } from "../../utils";
 const { Meta } = Card;
 
 export const CardComponent = (props) => {
@@ -36,7 +37,7 @@ export const CardComponent = (props) => {
       <StyleNameProduct>{name}</StyleNameProduct>
       <WrapperAmountSoldText>Sold: {sold}</WrapperAmountSoldText>
       <WrapperPrice>       
-        <span>{price?.toLocaleString()}$</span>
+        <span>{convertPrice(price)}</span>
         {/* {(discount && discount > 0) && (<WrapperDiscount>{discount}%</WrapperDiscount>)} */}
         {discount && discount > 0? (<WrapperDiscount>-{discount}%</WrapperDiscount>) : ''}
       </WrapperPrice>

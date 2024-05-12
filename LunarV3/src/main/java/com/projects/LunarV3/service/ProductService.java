@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,11 @@ public class ProductService {
     }
 
     public Page<Product> findAll(int page, int size, String sortAttribute, boolean isAsc, List<String> filters) {
+
+        if (size == -1) {
+            size = Integer.MAX_VALUE;
+        }
+
         Pageable pageable = isAsc ?
                 PageRequest.of(page, size, Sort.by(sortAttribute).ascending()) :
                 PageRequest.of(page, size, Sort.by(sortAttribute).descending());
@@ -47,7 +53,6 @@ public class ProductService {
             default ->
                     new JsonPage<Product>(productRepository.findAllByStatus(Product.Status.AVAILABLE, pageable), pageable);
         };
-
     }
 
     public boolean isProductExists(UUID id) {
@@ -77,6 +82,7 @@ public class ProductService {
                     Optional.ofNullable(product.getStockQuantity()).ifPresent(existingProduct::setStockQuantity);
                     Optional.ofNullable(product.getThumbnails()).ifPresent(existingProduct::setThumbnails);
                     Optional.ofNullable(product.getCategory()).ifPresent(existingProduct::setCategory);
+                    Optional.ofNullable(product.getRating()).ifPresent(existingProduct::setRating);
 
                     return productRepository.save(existingProduct);
                 }).orElseThrow(() -> new ObjectNotFoundException("Product Not Found"));
