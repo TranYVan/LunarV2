@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getHeader } from "../utils/Utils";
 
 export const getAllCategory = async () => {
   try {

@@ -29,6 +29,7 @@ import {
 import { convertPrice } from "../../utils";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import * as UserService from "../../services/UserService";
+import * as OrderService from "../../services/OrderService";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { updateUser } from "../../redux/slides/usersSlide";
 
@@ -59,45 +60,14 @@ const PaymentPage = () => {
     return res;
   });
   const { isLoading, isSuccess, isError, data } = mutationUpdateUser;
-  const handleChangeCount = (type, productId) => {
-    if (type === "increase") {
-      dispatch(increaseAmount({ productId }));
-    } else {
-      dispatch(decreaseAmount({ productId }));
-    }
-  };
 
-  const handleDeleteOrder = (productId) => {
-    dispatch(removeOrderProduct({ productId }));
-  };
+  const mutationAddOrder = useMutationHook((payload) => {
+    const res = OrderService.createOrder(payload);
+    return res;
+  });
 
-  const onChange = (e) => {
-    if (listChecked.includes(e.target.value)) {
-      const newListChecked = listChecked.filter(
-        (item) => item !== e.target.value
-      );
-      setListChecked(newListChecked);
-    } else {
-      setListChecked([...listChecked, e.target.value]);
-    }
-  };
+  const {isLoading: isLoadingCheckOut, data: dataCheckOut, isError: isErrorCheckOut, isSuccess: isCheckOutSuccess} = mutationAddOrder;
 
-  const handleOnchangeCheckAll = (e) => {
-    if (e.target.checked) {
-      const newListChecked = [];
-      order?.orderedItems?.forEach((item) => {
-        newListChecked.push(item?.product?.id);
-      });
-      setListChecked(newListChecked);
-    } else {
-      setListChecked([]);
-    }
-  };
-  const handleRemoveAllOrder = () => {
-    if (listChecked?.length > 1) {
-      dispatch(removeAllOrderProduct({ listChecked }));
-    }
-  };
   const onFinishUpdate = () => {
     console.log("stateuserdetail", stateUserDetail);
     const { name, phone, address } = stateUserDetail;
@@ -164,16 +134,46 @@ const PaymentPage = () => {
       return 10;
     }
   }, [priceMemo]);
+  
+  const totalPriceMemo = useMemo(() => {
+    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal);
+  }, [priceMemo, priceDiscountTotal, deliveryPriceMemo]);
 
   const handleCheckOut = () => {
-    if (!order?.selectedOrderedItems?.length) {
-      messageApi.error("Please select at least 1 item");
-    } else if (!user?.phone || !user?.name || !user?.address || !user?.city) {
-      setIsOpenMoalUpdateInfo(true);
-    } else {
-      console.log("add gio hang");
-    }
+    const { id }  = user;
+    mutationAddOrder.mutate(
+      {
+        orderedItems: order.selectedOrderedItems,
+        user: {
+          id: id
+        },
+        isPaid: false,
+        isDelivered: false,
+        isCanceled: false,
+        customerName: user?.name,
+        customerAddress: user?.address,
+        customerCity: user?.city,
+        customerPhone: user?.phone,
+        paymentMethod: payment,
+        deliveryMethod: delivery,
+        itemsPrice: priceMemo,
+        shippingPrice:deliveryPriceMemo,
+        totalPrice: totalPriceMemo
+      }
+    )
   };
+  console.log('checkout, ', {order, user});
+
+  useEffect(() => {
+    if (isCheckOutSuccess) {
+      messageApi.success('Check Out SuccessFully');
+      console.log(dataCheckOut);
+    } else if (isErrorCheckOut) { 
+      messageApi.error('Check Out Fail')
+    }
+  }, [isCheckOutSuccess])
+
+
   const handleCancelUpdate = () => {
     setIsOpenMoalUpdateInfo(false);
     setStateUserDetail({
@@ -220,10 +220,7 @@ const PaymentPage = () => {
     }
   };
 
-  const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal);
-  }, [priceMemo, priceDiscountTotal, deliveryPriceMemo]);
-
+  
   const handleDelivery = (e) => {
     setDelivery(e.target.value);
   };
@@ -234,239 +231,241 @@ const PaymentPage = () => {
 
 
   return (
-    <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
-      {contextHolder}
-      <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-        <h3
-          style={{
-            marginBottom: "15px",
-            marginLeft: "15px",
-            paddingTop: "12px",
-          }}
-        >
-          Payment
-        </h3>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <WrapperLeft>
-            <WrapperInfo>
-              <div>
-                <Lable>Choose Delivery Method</Lable>
-                <WrapperRadio onChange={handleDelivery} value={delivery}>
-                  <Radio value="fast">
-                    <span style={{ color: "#ea8500", fontWeight: "bold" }}>
-                      FAST
-                    </span>{" "}
-                    Giao hàng tiết kiệm
-                  </Radio>
-                  <Radio value="gojek">
-                    <span style={{ color: "#ea8500", fontWeight: "bold" }}>
-                      GO_JEK
-                    </span>{" "}
-                    Giao hàng tiết kiệm
-                  </Radio>
-                </WrapperRadio>
-              </div>
-            </WrapperInfo>
-            <WrapperInfo>
-              <div>
-                <Lable>Choose Payment Method</Lable>
-                <WrapperRadio onChange={handlePayment} value={payment}>
-                  <Radio value="cash_on_delivery"> Cash On Delivery</Radio>
-                  <Radio value="paypal"> Pay via Paypal</Radio>
-                </WrapperRadio>
-              </div>
-            </WrapperInfo>
-          </WrapperLeft>
-          <WrapperRight>
-            <div style={{ width: "100%" }}>
+    <LoadingComponent isLoading={isLoadingCheckOut}>  
+      <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
+        {contextHolder}
+        <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
+          <h3
+            style={{
+              marginBottom: "15px",
+              marginLeft: "15px",
+              paddingTop: "12px",
+            }}
+          >
+            Payment
+          </h3>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <WrapperLeft>
               <WrapperInfo>
                 <div>
-                  <Row>
-                    <Col span={14}>
-                      <span>Shipping Details: </span>
-                    </Col>
-                    <Col span={10} style={{ textAlign: "right" }}>
-                      <span style={{ color: "blue", cursor: "pointer" }}>
-                        Change
-                      </span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <span
-                      style={{ textAlign: "right", fontWeight: "700" }}
-                    >{`${user?.name} | ${user?.phone}`}</span>
-                  </Row>
-                  <Row>
-                    <span
-                      style={{ color: "#5a5a5a" }}
-                    >{`${user?.address}, ${user?.city}`}</span>
-                  </Row>
+                  <Lable>Choose Delivery Method</Lable>
+                  <WrapperRadio onChange={handleDelivery} value={delivery}>
+                    <Radio value="fast">
+                      <span style={{ color: "#ea8500", fontWeight: "bold" }}>
+                        FAST
+                      </span>{" "}
+                      Giao hàng tiết kiệm
+                    </Radio>
+                    <Radio value="gojek">
+                      <span style={{ color: "#ea8500", fontWeight: "bold" }}>
+                        GO_JEK
+                      </span>{" "}
+                      Giao hàng tiết kiệm
+                    </Radio>
+                  </WrapperRadio>
                 </div>
               </WrapperInfo>
               <WrapperInfo>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span>Subtotal</span>
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {convertPrice(priceMemo)}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span>Discount</span>
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {convertPrice(priceDiscountTotal)}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span>Shipping Charge</span>
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {convertPrice(deliveryPriceMemo)}
-                  </span>
+                <div>
+                  <Lable>Choose Payment Method</Lable>
+                  <WrapperRadio onChange={handlePayment} value={payment}>
+                    <Radio value="cash_on_delivery"> Cash On Delivery</Radio>
+                    <Radio value="paypal"> Pay via Paypal</Radio>
+                  </WrapperRadio>
                 </div>
               </WrapperInfo>
-              <WrapperTotal>
-                <span>Final Total</span>
-                <span style={{ display: "flex", flexDirection: "column" }}>
-                  <span
+            </WrapperLeft>
+            <WrapperRight>
+              <div style={{ width: "100%" }}>
+                <WrapperInfo>
+                  <div>
+                    <Row>
+                      <Col span={14}>
+                        <span>Shipping Details: </span>
+                      </Col>
+                      <Col span={10} style={{ textAlign: "right" }}>
+                        <span style={{ color: "blue", cursor: "pointer" }}>
+                          Change
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <span
+                        style={{ textAlign: "right", fontWeight: "700" }}
+                      >{`${user?.name} | ${user?.phone}`}</span>
+                    </Row>
+                    <Row>
+                      <span
+                        style={{ color: "#5a5a5a" }}
+                      >{`${user?.address}, ${user?.city}`}</span>
+                    </Row>
+                  </div>
+                </WrapperInfo>
+                <WrapperInfo>
+                  <div
                     style={{
-                      color: "rgb(254, 56, 52)",
-                      fontSize: "24px",
-                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {convertPrice(totalPriceMemo)}
+                    <span>Subtotal</span>
+                    <span
+                      style={{
+                        color: "#000",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {convertPrice(priceMemo)}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span>Discount</span>
+                    <span
+                      style={{
+                        color: "#000",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {convertPrice(priceDiscountTotal)}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span>Shipping Charge</span>
+                    <span
+                      style={{
+                        color: "#000",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {convertPrice(deliveryPriceMemo)}
+                    </span>
+                  </div>
+                </WrapperInfo>
+                <WrapperTotal>
+                  <span>Final Total</span>
+                  <span style={{ display: "flex", flexDirection: "column" }}>
+                    <span
+                      style={{
+                        color: "rgb(254, 56, 52)",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {convertPrice(totalPriceMemo)}
+                    </span>
+                    <span style={{ color: "#000", fontSize: "11px" }}>
+                      (VAT included if any)
+                    </span>
                   </span>
-                  <span style={{ color: "#000", fontSize: "11px" }}>
-                    (VAT included if any)
-                  </span>
-                </span>
-              </WrapperTotal>
-            </div>
-            <ButtonComponent
-              onClick={() => handleCheckOut()}
-              size={40}
-              styleButton={{
-                backgroundColor: "rgb(37, 92, 69)",
-                borderRadius: "0",
-                width: "100%",
-                height: "50px",
-                marginBottom: "5px",
-              }}
-              styleTextButton={{
-                color: "#fff",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-              textButton={"Check Out"}
-            ></ButtonComponent>
-          </WrapperRight>
+                </WrapperTotal>
+              </div>
+              <ButtonComponent
+                onClick={() => handleCheckOut()}
+                size={40}
+                styleButton={{
+                  backgroundColor: "rgb(37, 92, 69)",
+                  borderRadius: "0",
+                  width: "100%",
+                  height: "50px",
+                  marginBottom: "5px",
+                }}
+                styleTextButton={{
+                  color: "#fff",
+                  fontSize: "15px",
+                  fontWeight: "700",
+                }}
+                textButton={"Check Out"}
+              ></ButtonComponent>
+            </WrapperRight>
+          </div>
         </div>
-      </div>
-      <LoadingComponent isLoading={isLoading}>
-        <ModalComponent
-          title="Update shipping details"
-          open={isOpenModalUpdateInfo}
-          onCancel={handleCancelUpdate}
-          onOk={handleUpdateInfoUser}
-        >
-          <Form
-            name="basic"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 19 }}
-            autoComplete="on"
-            form={form}
-            onFinish={onFinishUpdate}
+        <LoadingComponent isLoading={isLoading}>
+          <ModalComponent
+            title="Update shipping details"
+            open={isOpenModalUpdateInfo}
+            onCancel={handleCancelUpdate}
+            onOk={handleUpdateInfoUser}
           >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: "Please provide your name!" }]}
+            <Form
+              name="basic"
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 19 }}
+              autoComplete="on"
+              form={form}
+              onFinish={onFinishUpdate}
             >
-              <InputComponent
-                value={stateUserDetail?.name}
-                onChange={handleOnChangeDetail}
+              <Form.Item
+                label="Name"
                 name="name"
-              />
-            </Form.Item>
+                rules={[{ required: true, message: "Please provide your name!" }]}
+              >
+                <InputComponent
+                  value={stateUserDetail?.name}
+                  onChange={handleOnChangeDetail}
+                  name="name"
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="Address"
-              name="address"
-              rules={[
-                { required: true, message: "Please provide your address!" },
-              ]}
-            >
-              <InputComponent
-                value={stateUserDetail?.address}
-                onChange={handleOnChangeDetail}
+              <Form.Item
+                label="Address"
                 name="address"
-              />
-            </Form.Item>
+                rules={[
+                  { required: true, message: "Please provide your address!" },
+                ]}
+              >
+                <InputComponent
+                  value={stateUserDetail?.address}
+                  onChange={handleOnChangeDetail}
+                  name="address"
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="City"
-              name="city"
-              rules={[{ required: true, message: "Please provide your city!" }]}
-            >
-              <InputComponent
-                value={stateUserDetail?.city}
-                onChange={handleOnChangeDetail}
+              <Form.Item
+                label="City"
                 name="city"
-              />
-            </Form.Item>
+                rules={[{ required: true, message: "Please provide your city!" }]}
+              >
+                <InputComponent
+                  value={stateUserDetail?.city}
+                  onChange={handleOnChangeDetail}
+                  name="city"
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="Phone"
-              name="phone"
-              rules={[
-                { required: true, message: "Please provide your phone!" },
-              ]}
-            >
-              <InputComponent
-                value={stateUserDetail?.phone}
-                onChange={handleOnChangeDetail}
+              <Form.Item
+                label="Phone"
                 name="phone"
-              />
-            </Form.Item>
-          </Form>
-        </ModalComponent>
-      </LoadingComponent>
-    </div>
+                rules={[
+                  { required: true, message: "Please provide your phone!" },
+                ]}
+              >
+                <InputComponent
+                  value={stateUserDetail?.phone}
+                  onChange={handleOnChangeDetail}
+                  name="phone"
+                />
+              </Form.Item>
+            </Form>
+          </ModalComponent>
+        </LoadingComponent>
+      </div>
+    </LoadingComponent>
   );
 };
 export default PaymentPage;

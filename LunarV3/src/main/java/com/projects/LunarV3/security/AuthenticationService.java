@@ -54,8 +54,7 @@ public class AuthenticationService {
                 .phone(request.getPhone())
                 .birthday(request.getBirthday())
                 .build();
-        System.out.println(user.getPassword());
-        System.out.println(request.getPassword());
+
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new ApplicationContextException("User Role is not available"));
 

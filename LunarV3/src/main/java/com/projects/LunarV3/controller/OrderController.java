@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,13 +22,15 @@ public class OrderController {
 
     @PostMapping
     @JsonView(Views.ExternalView.class)
-    @PreAuthorize("hasRole('ROLE_USER') and #id == principal.id")
-    public ResponseEntity<?> create(@RequestBody @JsonView(Views.InternalView.class) Order order) {
+    @PreAuthorize("(hasRole('ROLE_USER') and #o.user.id == principal.id)")
+    public ResponseEntity<?> create(@RequestBody @JsonView(Views.InternalView.class) @P("o") Order order) {
+        System.out.println(order);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.saveOrder(order));
     }
 
     @GetMapping
     @JsonView(Views.ExternalView.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(orderService.getAll());
@@ -51,7 +54,7 @@ public class OrderController {
 
     @GetMapping("/details/{id}")
     @JsonView(Views.ExternalView.class)
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #id == principal.id)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getDetail(@PathVariable UUID id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(orderService.getDetail(id));
