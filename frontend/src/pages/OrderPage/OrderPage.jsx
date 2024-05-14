@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from "./style";
-import { Checkbox, Col, Form, Row, message } from "antd";
+import { WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperStyleHeaderDelivery, WrapperTotal } from "./style";
+import { Checkbox, Col, ConfigProvider, Form, Row, Steps, message } from "antd";
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
@@ -15,11 +15,12 @@ import * as UserService from '../../services/UserService';
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { updateUser } from "../../redux/slides/usersSlide";
 import { useNavigate } from "react-router-dom";
+import Step from "../../components/Step/Step";
 
 const OrderPage = () => {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+  const [currentStep, setCurrentStep] = useState(2);
   const [messageApi, contextHolder] = message.useMessage();
   const order =  useSelector((state)=>state.order);
   const dispatch = useDispatch();
@@ -147,10 +148,13 @@ const OrderPage = () => {
 
   const deliveryPriceMemo = useMemo(() => {
     if (priceMemo > 2222) {
+      setCurrentStep(2);
       return 0;
-    } else if (priceMemo === 0) {
-      return 0;
+    } else if (priceMemo > 1111 ) {
+      setCurrentStep(1);
+      return 6;
     } else {
+      setCurrentStep(0);
       return 10;
     }
   }, [priceMemo]);
@@ -197,8 +201,36 @@ const OrderPage = () => {
   const totalPriceMemo = useMemo(() => {
     return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal)
   }, [priceMemo, priceDiscountTotal, deliveryPriceMemo])
+  const stepItems = [
+    {
+      title: 'Finished',
+    },
+    {
+      title: 'In Progress',
+    },
+    {
+      title: 'Waiting',
+    },
+  ];
 
-  return (
+  const itemDelivery = [
+    {
+      title: "10 $",
+      description: "Under 1,111$"
+    },
+     
+    {
+      title: "6 $",
+      description: "From 1,112$ To 2,222$"
+    },
+    {
+      title: "0 $",
+      description: "Over 2,222$"
+    },
+  ];
+
+  console.log('current steep', currentStep);
+  return (  
     <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
       {contextHolder}
       <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
@@ -213,6 +245,9 @@ const OrderPage = () => {
         </h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <WrapperLeft>
+            <WrapperStyleHeaderDelivery>
+              <Step items={itemDelivery} current={currentStep}/>
+            </WrapperStyleHeaderDelivery>
             <WrapperStyleHeader>
               <span style={{ display: "inline-block", width: "390px" }}>
                 <Checkbox

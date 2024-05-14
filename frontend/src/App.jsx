@@ -42,6 +42,11 @@ function App() {
     <ConfigProvider theme={{
       token: {
         fontFamily: '"Inter", sans-serif'
+      },
+      components: {
+        Steps: {
+          colorPrimary: "#495E57",
+        }
       }
     }}>
       <div>

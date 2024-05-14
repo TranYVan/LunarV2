@@ -32,6 +32,7 @@ import * as UserService from "../../services/UserService";
 import * as OrderService from "../../services/OrderService";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { updateUser } from "../../redux/slides/usersSlide";
+import { useNavigate } from "react-router-dom";
 
 const PaymentPage = () => {
   const [delivery, setDelivery] = useState("fast");
@@ -48,7 +49,7 @@ const PaymentPage = () => {
     city: "",
   });
   const [form] = Form.useForm();
-
+  const navigate = useNavigate();
   const mutationUpdateUser = useMutationHook((payload) => {
     const { name, phone, address, id, city } = payload;
     const res = UserService.updateUser(id, {
@@ -166,8 +167,24 @@ const PaymentPage = () => {
 
   useEffect(() => {
     if (isCheckOutSuccess) {
-      messageApi.success('Check Out SuccessFully');
       console.log(dataCheckOut);
+      const arrayOrdered = [];
+      order?.selectedOrderedItems?.forEach(element => {
+        arrayOrdered.push(element.product.id);
+      });
+      dispatch(removeAllOrderProduct({listChecked: arrayOrdered}));
+      
+      messageApi.success('Check Out SuccessFully');
+
+      navigate('/order-success', {
+        state: {
+          delivery,
+          payment,
+          orderItems: dataCheckOut?.orderedItems,
+          finalTotal: dataCheckOut?.totalPrice,
+          discount: dataCheckOut?.discount
+        }
+      })
     } else if (isErrorCheckOut) { 
       messageApi.error('Check Out Fail')
     }
