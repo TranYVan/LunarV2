@@ -31,7 +31,8 @@ export const CardComponent = (props) => {
         />
       }
       key={key}
-      onClick={(id)=>handleDetailProduct()}
+      onClick={(id)=> countInStock !== 0 && handleDetailProduct()}
+      disabled={countInStock === 0}
     >
 
       <StyleNameProduct>{name}</StyleNameProduct>

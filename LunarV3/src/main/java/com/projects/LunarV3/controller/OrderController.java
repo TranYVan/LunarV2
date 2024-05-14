@@ -3,6 +3,7 @@ package com.projects.LunarV3.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.projects.LunarV3.domain.Views;
 import com.projects.LunarV3.domain.model.Order;
+import com.projects.LunarV3.exception.InsufficientResourceException;
 import com.projects.LunarV3.exception.ObjectNotFoundException;
 import com.projects.LunarV3.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,14 @@ public class OrderController {
     @JsonView(Views.ExternalView.class)
     @PreAuthorize("(hasRole('ROLE_USER') and #o.user.id == principal.id)")
     public ResponseEntity<?> create(@RequestBody @JsonView(Views.InternalView.class) @P("o") Order order) {
-        System.out.println(order);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.saveOrder(order));
+
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(orderService.saveOrder(order));
+        } catch (InsufficientResourceException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping

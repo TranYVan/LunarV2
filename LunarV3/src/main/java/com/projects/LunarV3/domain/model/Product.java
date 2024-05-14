@@ -38,9 +38,11 @@ public class Product extends UserDateAudit {
     private Double cost;
     @PositiveOrZero
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Column(columnDefinition = "integer default 0")
     private Integer stockQuantity;
     @PositiveOrZero
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})
+    @Column(columnDefinition = "integer default 0")
     private Integer soldQuantity;
     @PositiveOrZero
     @JsonView({Views.ExternalView.class, Views.UpdateView.class})

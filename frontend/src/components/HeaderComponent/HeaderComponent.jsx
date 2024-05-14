@@ -52,6 +52,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
       {user?.roles.some((role) => role.name === "ROLE_ADMIN") &&  (
           <WrapperContentPopUp onClick={() => navigate('/system/admin')}>System Management</WrapperContentPopUp>
       )}
+      <WrapperContentPopUp onClick={() => navigate('/my-orders')}>My Orders</WrapperContentPopUp>
     </div>
   );
   const dispatch = useDispatch();

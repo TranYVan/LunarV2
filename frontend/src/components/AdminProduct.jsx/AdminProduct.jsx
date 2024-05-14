@@ -17,7 +17,6 @@ import { useQuery } from "react-query";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import ModalComponent from "../ModalComponent/ModalComponent";
-// import Highlighter from 'react-highlight-words';
 
 const AdminProduct = () => {
   const [form] = Form.useForm();
@@ -29,8 +28,8 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
 
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  // const [searchText, setSearchText] = useState('');
+  // const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
 
   const [stateProduct, setStateProduct] = useState({
@@ -119,10 +118,7 @@ const AdminProduct = () => {
   }, [updateProductForm, stateProductDetail]);
 
   const handleDetailsProduct = () => {
-    // if (rowSelected) {
-      // fetchProductDetail();
       setIsOpenDrawer(true);
-    // }
   };
   const handleCancelDelete = () => {
     setIsModalOpenDelete(false);
@@ -179,7 +175,6 @@ const AdminProduct = () => {
   });
 
   const mutationDeleteProduct = useMutationHook((payload) => {
-    const {id} = payload;
     const res = ProductService.deleteProduct(rowSelected);
     return res;
   })
@@ -189,8 +184,6 @@ const AdminProduct = () => {
     const res = ProductService.deleteManyProduct(ids);
     return res;
   })
-  
-  console.log('mutation delete many', mutationDeleteMany)
 
   const { data, isLoading, isError, isSuccess } = mutation;
   const {
@@ -211,11 +204,11 @@ const AdminProduct = () => {
       discount: "",
       stockQuantity: "",
       type: {
-        id: 0,
+        id: "",
         name: "",
       },
       image: "",
-      rating: 5
+      rating: 0
     });
 
     form.resetFields();

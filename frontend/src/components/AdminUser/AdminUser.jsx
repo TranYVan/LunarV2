@@ -732,8 +732,7 @@ const AdminUser = () => {
               name="password"
               rules={[
                 {
-                  required: true,
-                  message: "User must has a password",
+                  required: false
                 },
               ]}
             >

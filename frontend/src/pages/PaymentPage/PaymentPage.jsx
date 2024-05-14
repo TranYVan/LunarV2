@@ -13,7 +13,6 @@ import {
   WrapperRadio,
 } from "./style";
 import { Checkbox, Col, Form, Radio, Row, message } from "antd";
-import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { InputComponent } from "../../components/InputComponent/InputComponent";
@@ -159,7 +158,8 @@ const PaymentPage = () => {
         deliveryMethod: delivery,
         itemsPrice: priceMemo,
         shippingPrice:deliveryPriceMemo,
-        totalPrice: totalPriceMemo
+        totalPrice: totalPriceMemo,
+        discount: priceDiscountTotal
       }
     )
   };

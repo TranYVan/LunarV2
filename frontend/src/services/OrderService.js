@@ -16,3 +16,32 @@ export const createOrder = async (order) => {
     throw e;
   }
 };
+
+export const getOrderByUserId = async (userId) => {
+
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_API_URL_BACKEND}/api/v1/orders/get-by-user-id/${userId}`,
+      {
+        headers: getHeader(),
+      }
+    );
+    return res.data;
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getOrderDetailById = async (id) => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_API_URL_BACKEND}/api/v1/orders/details/${id}`,
+      {
+        headers: getHeader(),
+      }
+    );
+    return res.data;
+  } catch (e) {
+    throw e;
+  }
+}

@@ -3,11 +3,13 @@ package com.projects.LunarV3.service;
 import com.projects.LunarV3.domain.model.Order;
 import com.projects.LunarV3.domain.model.OrderedItems;
 import com.projects.LunarV3.domain.model.Product;
+import com.projects.LunarV3.exception.InsufficientResourceException;
 import com.projects.LunarV3.exception.ObjectNotFoundException;
 import com.projects.LunarV3.repository.OrderRepository;
 import com.projects.LunarV3.repository.ProductRepository;
 import com.projects.LunarV3.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ public class OrderService {
     private final UserRepository userRepository;
 
     public Order saveOrder(Order order) {
+
         Order newOrder = getOrder(order);
         newOrder.getOrderedItems().addAll((order.getOrderedItems()
                         .stream()
@@ -32,11 +35,21 @@ public class OrderService {
                             if (productOptional.isPresent()) {
                                 Product product = productOptional.get();
                                 OrderedItems newOrderItems = new OrderedItems();
+                                if (it.getAmount() > product.getStockQuantity()) {
+                                    throw new InsufficientResourceException("The stock number is not enough.");
+                                }
+
                                 newOrderItems.setProduct(product);
                                 newOrderItems.setOrder(newOrder);
                                 newOrderItems.setPrice(it.getPrice());
                                 newOrderItems.setAmount(it.getAmount());
                                 newOrderItems.setDiscount(it.getDiscount());
+
+
+                                product.setSoldQuantity(product.getSoldQuantity() + it.getAmount());
+                                product.setStockQuantity(product.getStockQuantity() - it.getAmount());
+
+                                productRepository.save(product);
                                 return newOrderItems;
                             }
                             return null;

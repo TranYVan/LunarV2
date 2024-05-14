@@ -26,6 +26,10 @@ public class ProductService {
         if (productRepository.existsByName(product.getName())) {
             throw new ObjectNotFoundException(product.getName() + "has already existed");
         }
+        product.setStatus(Product.Status.AVAILABLE);
+        if (product.getSoldQuantity() == null) {
+            product.setSoldQuantity(0);
+        }
         return productRepository.save(product);
     }
 
