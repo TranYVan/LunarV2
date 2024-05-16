@@ -39,7 +39,16 @@ export const orderSlice = createSlice({
         state?.orderedItems.push(orderItem);
       }
     },
-
+    setAmount: (state, action) => {
+      const {val, productId} = action.payload;
+      const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === productId);
+      if (itemOrder) {
+        if (itemOrder.product.stockQuantity >= val && val >= 1) {
+          itemOrder.amount = val;
+        }
+      }
+      
+    },
     increaseAmount: (state, action) => {
       const {productId} = action.payload;
       const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === productId);
@@ -104,6 +113,6 @@ export const orderSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct,selectedOrder } = orderSlice.actions;
+export const { addOrderProduct, increaseAmount, decreaseAmount,setAmount, removeOrderProduct, removeAllOrderProduct,selectedOrder } = orderSlice.actions;
 
 export default orderSlice.reducer;

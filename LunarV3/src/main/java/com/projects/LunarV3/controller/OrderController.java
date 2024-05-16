@@ -86,4 +86,17 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/cancel/{id}")
+    @JsonView(Views.ExternalView.class)
+    public ResponseEntity<?> cancel(@PathVariable UUID id) {
+        System.out.println(id);
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.cancel(id));
+        } catch (ObjectNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

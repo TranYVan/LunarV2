@@ -45,3 +45,18 @@ export const getOrderDetailById = async (id) => {
     throw e;
   }
 }
+
+export const cancelOrderById = async (id) => {
+  try {
+    const res = await axios.put(
+      `${process.env.REACT_API_URL_BACKEND}/api/v1/orders/cancel/${id}`,
+      null,
+      {
+        headers: getHeader(),
+      }
+    );
+    return res.data;
+  } catch (e) {
+    throw e;
+  }
+}
