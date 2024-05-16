@@ -8,7 +8,7 @@ import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import { InputComponent } from "../../components/InputComponent/InputComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { WrapperInputNumber } from "../../components/ProductDetailComponent/style";
-import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, selectedOrder } from "../../redux/slides/orderSlide";
+import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, selectedOrder, setAmount } from "../../redux/slides/orderSlide";
 import { convertPrice } from "../../utils";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import * as UserService from '../../services/UserService';
@@ -46,11 +46,15 @@ const OrderPage = () => {
     return res;
   });
   const {isLoading, isSuccess, isError, data} = mutationUpdateUser;
-  const handleChangeCount = (type, productId) => {
+  const handleChangeCount = (type, productId, isMax) => {
     if (type === 'increase') {
-      dispatch(increaseAmount({ productId }))
+      if (!isMax) {
+        dispatch(increaseAmount({ productId }))
+      }
     } else {
-      dispatch(decreaseAmount({ productId }))
+      if (!isMax) {
+        dispatch(decreaseAmount({ productId }))
+      }
     }
   }
   
@@ -332,7 +336,7 @@ const OrderPage = () => {
                             cursor: "pointer",
                           }}
                           onClick={() =>
-                            handleChangeCount("decrease", order?.product?.id)
+                            handleChangeCount("decrease", order?.product?.id, order?.amount === 1)
                           }
                         >
                           <MinusOutlined
@@ -343,6 +347,11 @@ const OrderPage = () => {
                           defaultValue={order?.amount}
                           value={order?.amount}
                           size="small"
+                          onChange={(value) => {
+                            // order.amount = value;
+                            // console.log(value);
+                            dispatch(setAmount({val: value, productId: order.product.id}))
+                          }}
                         />
                         <button
                           style={{
@@ -351,7 +360,7 @@ const OrderPage = () => {
                             cursor: "pointer",
                           }}
                           onClick={() =>
-                            handleChangeCount("increase", order?.product?.id)
+                            handleChangeCount("increase", order?.product?.id, order?.amount === order?.product?.stockQuantity)
                           }
                         >
                           <PlusOutlined

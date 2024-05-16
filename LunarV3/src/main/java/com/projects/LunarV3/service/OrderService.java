@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -90,10 +91,6 @@ public class OrderService {
         return orderRepository
                 .findById(id)
                 .map(existingOrder -> {
-                    if (order.getIsCanceled() != null && order.getIsCanceled() != existingOrder.getIsCanceled()) {
-                        existingOrder.setIsCanceled(true);
-                        existingOrder.setCanceledAt(LocalDateTime.now());
-                    }
                     if (order.getIsDelivered() != null && order.getIsDelivered() != existingOrder.getIsDelivered()) {
                         existingOrder.setIsDelivered(true);
                         existingOrder.setDeliveredAt(LocalDateTime.now());
@@ -105,6 +102,54 @@ public class OrderService {
                     
                     return orderRepository.save(existingOrder);
                 }).orElseThrow(() -> new ObjectNotFoundException("Order " + id + " not found!"));
+    }
+
+    public Order cancel(UUID id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isEmpty()) {
+            throw new ObjectNotFoundException("Order " + id + " not found");
+        }
+
+        Order order = optionalOrder.get();
+
+        if (order.getIsCanceled()) {
+            return order;
+        }
+
+        order.setIsCanceled(true);
+        order.setCanceledAt(LocalDateTime.now());
+        order.getOrderedItems().forEach(it -> {
+            Product product = it.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + it.getAmount());
+            product.setSoldQuantity(product.getSoldQuantity() - it.getAmount());
+            productRepository.save(product);
+        });
+        return orderRepository.save(order);
+
+//        Optional<Order> optionalOrder = orderRepository.
+//        System.out.println("iid" + id);
+//        Optional<Order> o = orderRepository.findById(id);
+//        if (o.isPresent()) {
+//            System.out.println(o.get());
+//        }
+//        return orderRepository
+//                .findById(id)
+//                .map(existingOrder -> {
+//                    System.out.println(existingOrder);
+//                    if (!existingOrder.getIsCanceled()) {
+//                        return existingOrder;
+//                    }
+//
+//                    existingOrder.setIsCanceled(true);
+//                    existingOrder.setCanceledAt(LocalDateTime.now());
+//                    existingOrder.getOrderedItems().forEach(it -> {
+//                        Product product = it.getProduct();
+//                        product.setStockQuantity(product.getStockQuantity() + it.getAmount());
+//                        product.setSoldQuantity(product.getSoldQuantity() - it.getAmount());
+//                        productRepository.save(product);
+//                    });
+//                    return orderRepository.save(existingOrder);
+//                }).orElseThrow(() -> new ObjectNotFoundException("Order " + id + " not found"));
     }
 
     private static Order getOrder(Order order) {

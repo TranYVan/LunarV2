@@ -31,7 +31,7 @@ public class UserPrincipal implements UserDetails {
                         .map(role ->
                                 new SimpleGrantedAuthority(role.getName().name())
                         ).collect(Collectors.toList());
-        System.out.println("create principal user "+ user);
+
         var result = UserPrincipal
                 .builder()
                 .id(user.getId())
@@ -41,7 +41,6 @@ public class UserPrincipal implements UserDetails {
                 .authorities(authorities)
                 .build();
 
-        System.out.println(result);
         return result;
     }
 

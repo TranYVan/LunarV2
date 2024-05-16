@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findAllByUserId(Long id);
+    Order findByIdAndIsCanceled(UUID id, Boolean isCanceled);
 }

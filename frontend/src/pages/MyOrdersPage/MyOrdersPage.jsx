@@ -12,8 +12,9 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { convertPrice } from "../../utils";
 import * as OrderService from "../../services/OrderService";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
+import { useMutationHook } from "../../hooks/useMutationHook";
 
 const MyOrdersPage = () => {
   const user = useSelector((state) => state?.user);
@@ -43,12 +44,20 @@ const MyOrdersPage = () => {
   const { isLoading, data } = queryOrder;
   console.log("data", data);
   
+  const mutationCancelOrder = useMutationHook((payload) => {
+    const res = OrderService.cancelOrderById(payload);
+    console.log('cancel', res);
+
+    return res;
+  })
+
   const handleCancelOrder = (order) => {
-    // mutation.mutate({ id: order?.id, token: user?.access_token, orderItems: order?.orderItems, userId: user?.id }, {
-    //   onSuccess: () => {
-    //     queryOrder.refetch()
-    //   },
-    // })
+    console.log('order id', order);
+    mutationCancelOrder.mutate(order?.id, {
+      onSuccess: () => {
+        queryOrder.refetch()
+      },
+    })
   }
   const handleDetailsOrder = (id) => {
     navigate(`/order-details/${id}`, {

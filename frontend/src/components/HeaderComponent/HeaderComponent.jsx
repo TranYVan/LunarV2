@@ -76,7 +76,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
       }}
     >
       <WrapperHeader style={{justifyContent: isHiddenCart && isHiddenSearch? 'space-between': 'unset' }}>
-        <Col span={4} onClick={() => {
+        <Col span={4} style={{cursor: "pointer"}} onClick={() => {
           navigate('/')
           console.log('hello')
         }}>

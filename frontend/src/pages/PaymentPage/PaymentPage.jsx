@@ -29,9 +29,11 @@ import { convertPrice } from "../../utils";
 import { useMutationHook } from "../../hooks/useMutationHook";
 import * as UserService from "../../services/UserService";
 import * as OrderService from "../../services/OrderService";
+import * as PaymentService from "../../services/PaymentServce";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { updateUser } from "../../redux/slides/usersSlide";
 import { useNavigate } from "react-router-dom";
+import { PayPalButton } from "react-paypal-button-v2";
 
 const PaymentPage = () => {
   const [delivery, setDelivery] = useState("fast");
@@ -47,6 +49,8 @@ const PaymentPage = () => {
     address: "",
     city: "",
   });
+  const [sdkReady, setSdkReady] = useState(false);
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const mutationUpdateUser = useMutationHook((payload) => {
@@ -246,6 +250,53 @@ const PaymentPage = () => {
     setPayment(e.target.value);
   }
 
+  const addPayPalScript = async() => {
+    const data = await PaymentService.getConfig();
+    const script = document.createElement('script');
+    script.type = "text/javascript";
+    script.src = `https://www.paypal.com/sdk/js?client-id=${data}`
+    script.async = true;
+    script.onload = () => {
+      setSdkReady(true);
+    }
+    document.body.appendChild(script);
+  }
+
+  useEffect(() => {
+    if (!window.paypal) {
+      addPayPalScript();
+    } else {
+      setSdkReady(true);
+    }
+  }, [])
+
+  const onSuccessPayPal = (details, data) => {
+    console.log('paypal success', {details, data})
+    const {id} = user;
+    mutationAddOrder.mutate(
+      {
+        orderedItems: order.selectedOrderedItems,
+        user: {
+          id: id
+
+        },
+        isPaid: true,
+        paidAt: details.create_time,
+        isDelivered: false,
+        isCanceled: false,
+        customerName: user?.name,
+        customerAddress: user?.address,
+        customerCity: user?.city,
+        customerPhone: user?.phone,
+        paymentMethod: payment,
+        deliveryMethod: delivery,
+        itemsPrice: priceMemo,
+        shippingPrice:deliveryPriceMemo,
+        totalPrice: totalPriceMemo,
+        discount: priceDiscountTotal,
+      }
+    )
+  }
 
   return (
     <LoadingComponent isLoading={isLoadingCheckOut}>  
@@ -392,7 +443,14 @@ const PaymentPage = () => {
                   </span>
                 </WrapperTotal>
               </div>
-              <ButtonComponent
+              {payment === 'paypal' && sdkReady? (
+                <PayPalButton
+                amount={totalPriceMemo}
+                // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                onSuccess={onSuccessPayPal}
+              />
+              ): (
+                <ButtonComponent
                 onClick={() => handleCheckOut()}
                 size={40}
                 styleButton={{
@@ -409,6 +467,8 @@ const PaymentPage = () => {
                 }}
                 textButton={"Check Out"}
               ></ButtonComponent>
+              )}
+              
             </WrapperRight>
           </div>
         </div>

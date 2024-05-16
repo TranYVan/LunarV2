@@ -49,7 +49,7 @@ const HomePage = () => {
   useEffect(() => {
     fetchAllCategories();
   }, []);
-
+  console.log(categories);
   return (
     <LoadingComponent isLoading={isLoading || loading}>
       <div style={{ width: "1270px", margin: "0 auto" }}>
