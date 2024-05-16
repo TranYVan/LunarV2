@@ -28,6 +28,9 @@ public class OrderService {
     public Order saveOrder(Order order) {
 
         Order newOrder = getOrder(order);
+        if (newOrder.getIsPaid()) {
+            newOrder.setPaidAt(LocalDateTime.now());
+        }
         newOrder.getOrderedItems().addAll((order.getOrderedItems()
                         .stream()
                         .map(it -> {
