@@ -24,9 +24,7 @@ const MyOrdersPage = () => {
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
 
   const fetchMyOrder = async () => {
-    ("fetching orders", user?.id, user?.access_token);
     const res = await OrderService.getOrderByUserId(user?.id);
-    ("res in fetch user orders", res);
     return res;
   };
   const queryOrder = useQuery({
@@ -42,17 +40,14 @@ const MyOrdersPage = () => {
   }, [user]);
 
   const { isLoading, data } = queryOrder;
-  ("data", data);
   
   const mutationCancelOrder = useMutationHook((payload) => {
     const res = OrderService.cancelOrderById(payload);
-    ('cancel', res);
 
     return res;
   })
 
   const handleCancelOrder = (order) => {
-    ('order id', order);
     mutationCancelOrder.mutate(order?.id, {
       onSuccess: () => {
         queryOrder.refetch()

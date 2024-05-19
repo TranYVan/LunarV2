@@ -49,7 +49,6 @@ const HomePage = () => {
   useEffect(() => {
     fetchAllCategories();
   }, []);
-  (categories);
   
   return (
     <LoadingComponent isLoading={isLoading || loading}>

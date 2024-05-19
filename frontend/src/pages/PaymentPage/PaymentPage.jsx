@@ -34,6 +34,7 @@ import LoadingComponent from "../../components/LoadingComponent/LoadingComponent
 import { updateUser } from "../../redux/slides/usersSlide";
 import { useNavigate } from "react-router-dom";
 import { PayPalButton } from "react-paypal-button-v2";
+import { toFloat } from "validator";
 
 const PaymentPage = () => {
   const [delivery, setDelivery] = useState("fast");
@@ -73,10 +74,8 @@ const PaymentPage = () => {
   const {isLoading: isLoadingCheckOut, data: dataCheckOut, isError: isErrorCheckOut, isSuccess: isCheckOutSuccess} = mutationAddOrder;
 
   const onFinishUpdate = () => {
-    ("stateuserdetail", stateUserDetail);
     const { name, phone, address } = stateUserDetail;
     if (name && phone && address) {
-      ("haha");
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail,
@@ -116,7 +115,7 @@ const PaymentPage = () => {
   const priceDiscountTotal = useMemo(() => {
     const result = order?.selectedOrderedItems?.reduce((total, cur) => {
       if (cur.discount) {
-        return (total + (cur.price * cur.discount * cur.amount) / 100).toFixed(2);
+        return (total + (cur.price * cur.discount * cur.amount) * 0.01).toFixed(2);
       } else {
         return total;
       }
@@ -138,7 +137,7 @@ const PaymentPage = () => {
   }, [priceMemo]);
   
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal).toFixed(2);
+    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal);
   }, [priceMemo, priceDiscountTotal, deliveryPriceMemo]);
 
   const handleCheckOut = () => {
@@ -165,11 +164,9 @@ const PaymentPage = () => {
       }
     )
   };
-  ('checkout, ', {order, user});
 
   useEffect(() => {
     if (isCheckOutSuccess) {
-      (dataCheckOut);
       const arrayOrdered = [];
       order?.selectedOrderedItems?.forEach(element => {
         arrayOrdered.push(element.product.id);
@@ -205,10 +202,8 @@ const PaymentPage = () => {
   };
 
   const handleUpdateInfoUser = () => {
-    ("stateuserdetail", stateUserDetail);
     const { name, phone, address, city } = stateUserDetail;
     if (name && phone && address && city) {
-      ("haha");
       mutationUpdateUser.mutate(
         {
           id: user?.id,
@@ -269,7 +264,6 @@ const PaymentPage = () => {
   }, [])
   
   const onSuccessPayPal = (details, data) => {
-    ('paypal success', {details, data})
     const {id} = user;
     mutationAddOrder.mutate(
       {

@@ -31,10 +31,8 @@ const SignUpPage = () => {
   const mutation = useMutationHook(
     data => UserService.signUpUser(data)
   )
-  ('mutation: ', mutation);
   
   const {data, isLoading, isError, isSuccess} = mutation;
-  (isSuccess, isError, isErr);
   useEffect(() => {
     if (isSuccess == true) {
       
@@ -45,7 +43,6 @@ const SignUpPage = () => {
       
       handleNavigateSignIn();
     } else if (isError == true || isErr == true) {
-      ('hehe');
       messageApi.open({
         type: "error",
         content: "error"
@@ -68,7 +65,6 @@ const SignUpPage = () => {
     setPhone(value.target.value);
   } 
   const handleOnChangeBirthday = (value) => {
-    (value);
     if (!value) { 
       // setBirthday(dayjs('2019-09-03', dateFormat)); 
       setBirthday(null);
@@ -90,7 +86,6 @@ const SignUpPage = () => {
 
     if (validationMessage !== null) {
       setIsError(true);
-      (validationMessage);
       setErrMessage(validationMessage);
       return
     }

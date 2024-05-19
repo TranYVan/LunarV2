@@ -27,6 +27,7 @@ public class OrderController {
     public ResponseEntity<?> create(@RequestBody @JsonView(Views.InternalView.class) @P("o") Order order) {
 
         try {
+            System.out.println(order);
             return ResponseEntity.status(HttpStatus.CREATED).body(orderService.saveOrder(order));
         } catch (InsufficientResourceException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

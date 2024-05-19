@@ -17,7 +17,6 @@ const SignInPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const location = useLocation();
-  ('location ', location)
   const handleNavigateSignUp = () => {
     navigate("/sign-up");
   };
@@ -44,9 +43,6 @@ const SignInPage = () => {
       });
     
       localStorage.setItem("access_token", data?.token);
-      (localStorage.getItem('access_token'));
-      ('data: ', localStorage.getItem('access_token'));
-      ('token: ', data?.token);
 
       if (data?.token) {
         const decoded = jwtDecode(data?.token);
@@ -67,11 +63,9 @@ const SignInPage = () => {
     const res = await UserService.getUserProfile(email, token);
     dispatch(updateUser({...res, token}));
 
-    ("res: ", res);
   };
 
   const handleSignIn = () => {
-    (email, password);
     mutation.mutate({
       email,
       password,

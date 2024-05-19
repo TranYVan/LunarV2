@@ -14,7 +14,6 @@ const OrderSuccess = () => {
 
   const location = useLocation();
   const {state} = location;
-  ('locaton order success', location);
 
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>

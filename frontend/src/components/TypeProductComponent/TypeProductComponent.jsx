@@ -5,7 +5,6 @@ const TypeProductComponent = ({ name, key }) => {
   const navigate = useNavigate();
 
   const handleNavigateType = (type) => {
-    ("navigate type");
     navigate(`/products/${type?.replace(/ /g, "_")}`,{state: name});
   };
 

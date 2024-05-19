@@ -82,6 +82,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         // Don't do this in production, use a proper list  of allowed origins
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("https://lunar-ecommerce.vercel.app");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,

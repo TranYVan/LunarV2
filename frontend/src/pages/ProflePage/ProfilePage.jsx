@@ -48,7 +48,6 @@ const ProfilePage = () => {
   );
 
   const { data, isLoading, isError, isSuccess } = mutation;
-  ("mutation", mutation);
 
   useEffect(() => {
     setEmail(user?.email);

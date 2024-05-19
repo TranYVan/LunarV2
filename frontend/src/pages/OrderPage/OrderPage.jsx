@@ -24,8 +24,8 @@ const OrderPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const order =  useSelector((state)=>state.order);
   const dispatch = useDispatch();
-  const [listChecked, setListChecked] = useState([])
-  ('order', order);
+  const [listChecked, setListChecked] = useState([]);
+
   const [isOpenModalUpdateInfo, setIsOpenMoalUpdateInfo] = useState(false);
   const [stateUserDetail, setStateUserDetail] = useState({
     name: "",
@@ -95,10 +95,8 @@ const OrderPage = () => {
   }
 
   const onFinishUpdate = () => {
-    ('stateuserdetail', stateUserDetail);
     const {name, phone, address} = stateUserDetail;
     if (name && phone && address) {
-      ('haha')
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail
@@ -190,10 +188,8 @@ const OrderPage = () => {
   }
 
   const handleUpdateInfoUser = () => {
-    ('stateuserdetail', stateUserDetail);
     const {name, phone, address, city} = stateUserDetail;
     if (name && phone && address && city) {
-      ('haha')
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail
@@ -239,7 +235,6 @@ const OrderPage = () => {
     },
   ];
 
-  ('current steep', currentStep);
   return (  
     <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
       {contextHolder}

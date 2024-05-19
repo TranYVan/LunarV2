@@ -67,7 +67,7 @@ public class OrderService {
         Optional<User> optionalUser = userRepository.findById(newOrder.getUser().getId());
         User user = optionalUser.get();
         System.out.println(newOrder.getUser());
-        emailService.sendConfirmationEmail(order.getUser().getEmail(), "LUNAR - Order Confirmation", newOrder);
+        emailService.sendConfirmationEmail(user.getEmail(), "LUNAR - Order Confirmation", newOrder);
         return orderRepository.save(newOrder);
     }
 

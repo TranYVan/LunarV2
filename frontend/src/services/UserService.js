@@ -33,7 +33,6 @@ export const getUserProfile = async (email, token) => {
 
 export const getUserProfileById = async (id) => {
   try {
-    ('id', id);
     const res = await axios.get(
       `${process.env.REACT_API_URL_BACKEND}/api/v1/users/details/id=${id}`,
       {

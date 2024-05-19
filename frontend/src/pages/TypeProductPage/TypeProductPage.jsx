@@ -33,13 +33,11 @@ const TypeProductPage = () => {
     fetchAllCategories();
   }, []);
 
-  ('categories', categories);
   const fetchProductType = async (type, page, size) => {
     setLoading(true);
     const res = await ProductService.getAllProductsByCategory(type, page, size);
     if (res?.status == 200) {
       setProducts(res?.data?.content);
-      ("res", res);
       setPagination({
         ...pagination,
         total: res?.data?.totalElements,
@@ -49,7 +47,6 @@ const TypeProductPage = () => {
     setLoading(false);
   };
 
-  ("loading", loading);
 
   useEffect(() => {
     if (state){
@@ -68,14 +65,12 @@ const TypeProductPage = () => {
     return originalElement;
   };
   const onChange = (current, pageSize) => {
-    (current, pageSize);
     setPagination({
       ...pagination,
       page: current - 1,
       size: pageSize
     });
   };
-  ('pagination', pagination);
 
   return (
     <LoadingComponent isLoading={loading}>

@@ -30,7 +30,6 @@ export const orderSlice = createSlice({
   initialState,
   reducers: {
     addOrderProduct: (state, action) => {
-      ({state, action})
       const {orderItem} = action.payload;
       const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === orderItem.product?.id);
       if (itemOrder) {
@@ -89,7 +88,6 @@ export const orderSlice = createSlice({
       }
     },
     decreaseAmount: (state, action) => {
-      ('payload ', action.payload);
       const {productId} = action.payload;
       const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === productId);
       if (itemOrder.amount > 1) {
@@ -126,7 +124,6 @@ export const orderSlice = createSlice({
     },
     selectedOrder: (state, action) => {
       const { listChecked } = action.payload;
-      ('list checked', listChecked);
       const orderItemsSelected = [];
       state?.orderedItems.forEach((order) => {
           if (listChecked.includes(order?.product?.id)) {
