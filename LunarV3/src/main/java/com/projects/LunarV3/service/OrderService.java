@@ -3,11 +3,13 @@ package com.projects.LunarV3.service;
 import com.projects.LunarV3.domain.model.Order;
 import com.projects.LunarV3.domain.model.OrderedItems;
 import com.projects.LunarV3.domain.model.Product;
+import com.projects.LunarV3.domain.model.User;
 import com.projects.LunarV3.exception.InsufficientResourceException;
 import com.projects.LunarV3.exception.ObjectNotFoundException;
 import com.projects.LunarV3.repository.OrderRepository;
 import com.projects.LunarV3.repository.ProductRepository;
 import com.projects.LunarV3.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,13 +27,15 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public Order saveOrder(Order order) {
+    public Order saveOrder(Order order) throws MessagingException {
 
         Order newOrder = getOrder(order);
         if (newOrder.getIsPaid()) {
             newOrder.setPaidAt(LocalDateTime.now());
         }
+
         newOrder.getOrderedItems().addAll((order.getOrderedItems()
                         .stream()
                         .map(it -> {
@@ -60,7 +64,10 @@ public class OrderService {
                         })
                         .toList()
         ));
-
+        Optional<User> optionalUser = userRepository.findById(newOrder.getUser().getId());
+        User user = optionalUser.get();
+        System.out.println(newOrder.getUser());
+        emailService.sendConfirmationEmail(order.getUser().getEmail(), "LUNAR - Order Confirmation", newOrder);
         return orderRepository.save(newOrder);
     }
 

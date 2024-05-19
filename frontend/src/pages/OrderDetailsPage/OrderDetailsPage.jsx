@@ -15,7 +15,7 @@ const OrderDetailsPage = () => {
   const { id } = params
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user);
-  console.log('id ', id);
+  ('id ', id);
   const [ isOrderIdAvailable, setIsOrderIdAvailable] = useState(false);
   
   useEffect(() => {
@@ -26,15 +26,15 @@ const OrderDetailsPage = () => {
   
   const fetchDetailsOrder = async () => {
     const res = await OrderService.getOrderDetailById(id);
-    console.log('res', res);
+    ('res', res);
     return res;
   }
 
   const queryOrder = useQuery({queryKey: ['order-details'], queryFn: fetchDetailsOrder, enabled: isOrderIdAvailable});
   
   const {isLoading, data} = queryOrder;
-  console.log('data ', data)
-  console.log('is av', isOrderIdAvailable)
+  ('data ', data)
+  ('is av', isOrderIdAvailable)
   return (
     <LoadingComponent isLoading={isLoading}>
       <div style={{width: '100%', minHeight: '100vh', background: '#f5f5fa'}}>

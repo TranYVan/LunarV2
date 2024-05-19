@@ -17,7 +17,7 @@ const SignInPage = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const location = useLocation();
-  console.log('location ', location)
+  ('location ', location)
   const handleNavigateSignUp = () => {
     navigate("/sign-up");
   };
@@ -44,9 +44,9 @@ const SignInPage = () => {
       });
     
       localStorage.setItem("access_token", data?.token);
-      console.log(localStorage.getItem('access_token'));
-      console.log('data: ', localStorage.getItem('access_token'));
-      console.log('token: ', data?.token);
+      (localStorage.getItem('access_token'));
+      ('data: ', localStorage.getItem('access_token'));
+      ('token: ', data?.token);
 
       if (data?.token) {
         const decoded = jwtDecode(data?.token);
@@ -67,11 +67,11 @@ const SignInPage = () => {
     const res = await UserService.getUserProfile(email, token);
     dispatch(updateUser({...res, token}));
 
-    console.log("res: ", res);
+    ("res: ", res);
   };
 
   const handleSignIn = () => {
-    console.log(email, password);
+    (email, password);
     mutation.mutate({
       email,
       password,
@@ -154,7 +154,7 @@ const SignInPage = () => {
                 fontWeight: "700",
                 fontSize: "17px",
               }}
-              textButton={"Sign In"}
+              textbutton={"Sign In"}
             ></ButtonComponent>
           </LoadingComponent>
           <WrapperNormalText>Forgot password</WrapperNormalText>

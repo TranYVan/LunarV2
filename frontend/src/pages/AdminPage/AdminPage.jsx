@@ -1,9 +1,10 @@
 import { ConfigProvider, Menu } from "antd";
 import React, { useState } from "react";
-import { UserOutlined, AppstoreOutlined } from "@ant-design/icons";
+import { UserOutlined, AppstoreOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { HeaderComponent } from "../../components/HeaderComponent/HeaderComponent";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct.jsx/AdminProduct";
+import AdminOrder from "../../components/AdminOrder/AdminOrder";
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -17,6 +18,7 @@ function getItem(label, key, icon, children, type) {
 const items = [
   getItem("User", "user", <UserOutlined />),
   getItem("Product", "product", <AppstoreOutlined />),
+  getItem("Order", "order", <ShoppingCartOutlined />)
 ];
 
 const getLevelKeys = (items1) => {
@@ -41,7 +43,7 @@ const levelKeys = getLevelKeys(items);
 const AdminPage = () => {
   const [selectedKey, setSelectedKey] = useState("");
 
-  const handleOnClick = ({ item, key, keyPath, domEvent }) => {
+  const handleOnClick = ({key}) => {
     setSelectedKey(key);
   };
 
@@ -51,7 +53,8 @@ const AdminPage = () => {
         return <AdminUser />;
       case "product":
         return <AdminProduct />;
-
+      case "order":
+        return <AdminOrder />;
       default:
         return <AdminUser />;
     }

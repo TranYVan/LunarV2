@@ -12,7 +12,7 @@ export const validateSignUpForm = (
     return "Invalid Email";
   }
   if (!validator.isMobilePhone(phone, "vi-VN")) {
-    console.log("phone");
+    ("phone");
     return "Invalid Mobile Phone Number";
   }
   if (!validator.equals(password, confirmPassword)) {
@@ -23,7 +23,7 @@ export const validateSignUpForm = (
 
 export const validateProfileForm = (email, fullName, phone, birthday) => {
   if (!validator.isMobilePhone(phone, "vi-VN")) {
-    console.log("phone");
+    ("phone");
     return "Invalid Mobile Phone Number";
   }
   return null;

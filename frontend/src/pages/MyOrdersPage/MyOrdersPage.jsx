@@ -24,9 +24,9 @@ const MyOrdersPage = () => {
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
 
   const fetchMyOrder = async () => {
-    console.log("fetching orders", user?.id, user?.access_token);
+    ("fetching orders", user?.id, user?.access_token);
     const res = await OrderService.getOrderByUserId(user?.id);
-    console.log("res in fetch user orders", res);
+    ("res in fetch user orders", res);
     return res;
   };
   const queryOrder = useQuery({
@@ -42,17 +42,17 @@ const MyOrdersPage = () => {
   }, [user]);
 
   const { isLoading, data } = queryOrder;
-  console.log("data", data);
+  ("data", data);
   
   const mutationCancelOrder = useMutationHook((payload) => {
     const res = OrderService.cancelOrderById(payload);
-    console.log('cancel', res);
+    ('cancel', res);
 
     return res;
   })
 
   const handleCancelOrder = (order) => {
-    console.log('order id', order);
+    ('order id', order);
     mutationCancelOrder.mutate(order?.id, {
       onSuccess: () => {
         queryOrder.refetch()
@@ -188,8 +188,7 @@ const MyOrdersPage = () => {
                       </span>
                       <span
                         style={{
-                          fontSize: "16px",
-                          color: "rgb(56, 56, 61)",
+                          color: "rgb(255, 66, 78)", fontSize: "16px",
                           fontWeight: 700,
                         }}
                       >
@@ -207,7 +206,7 @@ const MyOrdersPage = () => {
                               border: '1px solid #9255FD',
                               borderRadius: '4px'
                             }}
-                            textButton={'Cancel Order'}
+                            textbutton={'Cancel Order'}
                             styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
                           >
                           </ButtonComponent>
@@ -220,7 +219,7 @@ const MyOrdersPage = () => {
                             border: '1px solid #9255FD',
                             borderRadius: '4px'
                           }}
-                          textButton={'Details'}
+                          textbutton={'Details'}
                           styleTextButton={{ color: '#9255FD', fontSize: '14px' }}
                         >
                         </ButtonComponent>

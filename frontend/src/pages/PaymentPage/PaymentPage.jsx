@@ -73,10 +73,10 @@ const PaymentPage = () => {
   const {isLoading: isLoadingCheckOut, data: dataCheckOut, isError: isErrorCheckOut, isSuccess: isCheckOutSuccess} = mutationAddOrder;
 
   const onFinishUpdate = () => {
-    console.log("stateuserdetail", stateUserDetail);
+    ("stateuserdetail", stateUserDetail);
     const { name, phone, address } = stateUserDetail;
     if (name && phone && address) {
-      console.log("haha");
+      ("haha");
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail,
@@ -107,7 +107,7 @@ const PaymentPage = () => {
   
   const priceMemo = useMemo(() => {
     const result = order?.selectedOrderedItems?.reduce((total, cur) => {
-      return total + cur.price * cur.amount;
+      return (total + cur.price * cur.amount);
     }, 0);
 
     return result;
@@ -116,9 +116,7 @@ const PaymentPage = () => {
   const priceDiscountTotal = useMemo(() => {
     const result = order?.selectedOrderedItems?.reduce((total, cur) => {
       if (cur.discount) {
-        return (total + (cur.price * cur.discount * cur.amount) / 100).toFixed(
-          2
-        );
+        return (total + (cur.price * cur.discount * cur.amount) / 100).toFixed(2);
       } else {
         return total;
       }
@@ -132,15 +130,15 @@ const PaymentPage = () => {
   const deliveryPriceMemo = useMemo(() => {
     if (priceMemo > 2222) {
       return 0;
-    } else if (priceMemo === 0) {
-      return 0;
+    } else if (priceMemo > 1111 ) {
+      return 6;
     } else {
       return 10;
     }
   }, [priceMemo]);
   
   const totalPriceMemo = useMemo(() => {
-    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal);
+    return Number(priceMemo + deliveryPriceMemo - priceDiscountTotal).toFixed(2);
   }, [priceMemo, priceDiscountTotal, deliveryPriceMemo]);
 
   const handleCheckOut = () => {
@@ -167,11 +165,11 @@ const PaymentPage = () => {
       }
     )
   };
-  console.log('checkout, ', {order, user});
+  ('checkout, ', {order, user});
 
   useEffect(() => {
     if (isCheckOutSuccess) {
-      console.log(dataCheckOut);
+      (dataCheckOut);
       const arrayOrdered = [];
       order?.selectedOrderedItems?.forEach(element => {
         arrayOrdered.push(element.product.id);
@@ -207,10 +205,10 @@ const PaymentPage = () => {
   };
 
   const handleUpdateInfoUser = () => {
-    console.log("stateuserdetail", stateUserDetail);
+    ("stateuserdetail", stateUserDetail);
     const { name, phone, address, city } = stateUserDetail;
     if (name && phone && address && city) {
-      console.log("haha");
+      ("haha");
       mutationUpdateUser.mutate(
         {
           id: user?.id,
@@ -269,9 +267,9 @@ const PaymentPage = () => {
       setSdkReady(true);
     }
   }, [])
-
+  
   const onSuccessPayPal = (details, data) => {
-    console.log('paypal success', {details, data})
+    ('paypal success', {details, data})
     const {id} = user;
     mutationAddOrder.mutate(
       {
@@ -465,7 +463,7 @@ const PaymentPage = () => {
                   fontSize: "15px",
                   fontWeight: "700",
                 }}
-                textButton={"Check Out"}
+                textbutton={"Check Out"}
               ></ButtonComponent>
               )}
               

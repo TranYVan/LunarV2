@@ -48,7 +48,7 @@ const ProfilePage = () => {
   );
 
   const { data, isLoading, isError, isSuccess } = mutation;
-  console.log("mutation", mutation);
+  ("mutation", mutation);
 
   useEffect(() => {
     setEmail(user?.email);
@@ -56,6 +56,7 @@ const ProfilePage = () => {
     setPhone(user?.phone);
     setBirthday(user?.birthday);
     setAvatar(user?.avatar);
+    setAddress(user?.address);
   }, [user]);
 
   const handleGetDetailsUser = async (email, token) => {

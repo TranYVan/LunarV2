@@ -31,10 +31,10 @@ const SignUpPage = () => {
   const mutation = useMutationHook(
     data => UserService.signUpUser(data)
   )
-  console.log('mutation: ', mutation);
+  ('mutation: ', mutation);
   
   const {data, isLoading, isError, isSuccess} = mutation;
-  console.log(isSuccess, isError, isErr);
+  (isSuccess, isError, isErr);
   useEffect(() => {
     if (isSuccess == true) {
       
@@ -45,7 +45,7 @@ const SignUpPage = () => {
       
       handleNavigateSignIn();
     } else if (isError == true || isErr == true) {
-      console.log('hehe');
+      ('hehe');
       messageApi.open({
         type: "error",
         content: "error"
@@ -68,7 +68,7 @@ const SignUpPage = () => {
     setPhone(value.target.value);
   } 
   const handleOnChangeBirthday = (value) => {
-    console.log(value);
+    (value);
     if (!value) { 
       // setBirthday(dayjs('2019-09-03', dateFormat)); 
       setBirthday(null);
@@ -90,7 +90,7 @@ const SignUpPage = () => {
 
     if (validationMessage !== null) {
       setIsError(true);
-      console.log(validationMessage);
+      (validationMessage);
       setErrMessage(validationMessage);
       return
     }
@@ -172,7 +172,7 @@ const SignUpPage = () => {
               fontWeight: "700",
               fontSize: "17px",
             }}
-            textButton={"Sign Up"}
+            textbutton={"Sign Up"}
             onClick={handleSignUp}
             ></ButtonComponent>
           </LoadingComponent>

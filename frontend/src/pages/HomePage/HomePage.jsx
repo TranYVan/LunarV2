@@ -49,7 +49,8 @@ const HomePage = () => {
   useEffect(() => {
     fetchAllCategories();
   }, []);
-  console.log(categories);
+  (categories);
+  
   return (
     <LoadingComponent isLoading={isLoading || loading}>
       <div style={{ width: "1270px", margin: "0 auto" }}>
@@ -98,7 +99,7 @@ const HomePage = () => {
             }}
           >
             <WrapperButtonMore
-              textButton="Load more"
+              textbutton="Load more"
               disabled={products?.totalElements === products?.content?.length || !products?.hasNext}
               styleButton={{
                 backgroundColor: "#495E57",

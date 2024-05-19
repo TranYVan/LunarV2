@@ -17,6 +17,22 @@ export const createOrder = async (order) => {
   }
 };
 
+export const updateOrder = async (id, order) => {
+
+  try {
+    const res = await axios.put(
+      `${process.env.REACT_API_URL_BACKEND}/api/v1/orders/${id}`,
+      order,
+      {
+        headers: getHeader(),
+      }
+    );
+    return res.data;
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const getOrderByUserId = async (userId) => {
 
   try {
@@ -57,6 +73,20 @@ export const cancelOrderById = async (id) => {
     );
     return res.data;
   } catch (e) {
+    throw e;
+  }
+}
+
+export const getAllOrders = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_API_URL_BACKEND}/api/v1/orders`,
+      {
+        headers: getHeader(),
+      }
+    );
+    return res.data;
+  } catch (error) {
     throw e;
   }
 }

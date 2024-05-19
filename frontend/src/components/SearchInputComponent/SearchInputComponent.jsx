@@ -8,7 +8,7 @@ export const SearchInputComponent = (props) => {
   const {
     size,
     placeholder,
-    textButton,
+    textbutton,
     backgroundColorInput = "#fff",
     backgroundColorButton = "#495E57",
     colorButton= "#fff"
@@ -34,7 +34,7 @@ export const SearchInputComponent = (props) => {
         }}
         icon={<SearchOutlined style={{ color: colorButton }} />}
 
-        textButton={textButton}>
+        textbutton={textbutton}>
         
       </ButtonComponent>
     </div>

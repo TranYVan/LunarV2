@@ -25,7 +25,7 @@ const OrderPage = () => {
   const order =  useSelector((state)=>state.order);
   const dispatch = useDispatch();
   const [listChecked, setListChecked] = useState([])
-  console.log('order', order);
+  ('order', order);
   const [isOpenModalUpdateInfo, setIsOpenMoalUpdateInfo] = useState(false);
   const [stateUserDetail, setStateUserDetail] = useState({
     name: "",
@@ -59,6 +59,7 @@ const OrderPage = () => {
   }
   
   const handleDeleteOrder = (productId) => {
+    const newListChecked = listChecked.filter((item) => item !== productId);
     dispatch(removeOrderProduct({productId}));
   }
 
@@ -87,11 +88,17 @@ const OrderPage = () => {
       dispatch(removeAllOrderProduct({ listChecked }))
     }
   }
+
+  const handleOnChangeShippingDetail = () => {
+    // setStateUserDetail()
+    setIsOpenMoalUpdateInfo(true);
+  }
+
   const onFinishUpdate = () => {
-    console.log('stateuserdetail', stateUserDetail);
+    ('stateuserdetail', stateUserDetail);
     const {name, phone, address} = stateUserDetail;
     if (name && phone && address) {
-      console.log('haha')
+      ('haha')
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail
@@ -117,7 +124,6 @@ const OrderPage = () => {
     
     return result;
   }, [order]);
-  
   
   
   useEffect(()=> {
@@ -184,10 +190,10 @@ const OrderPage = () => {
   }
 
   const handleUpdateInfoUser = () => {
-    console.log('stateuserdetail', stateUserDetail);
+    ('stateuserdetail', stateUserDetail);
     const {name, phone, address, city} = stateUserDetail;
     if (name && phone && address && city) {
-      console.log('haha')
+      ('haha')
       mutationUpdateUser.mutate({
         id: user?.id,
         ...stateUserDetail
@@ -233,7 +239,7 @@ const OrderPage = () => {
     },
   ];
 
-  console.log('current steep', currentStep);
+  ('current steep', currentStep);
   return (  
     <div style={{ background: "#f5f5fa", with: "100%", height: "100vh" }}>
       {contextHolder}
@@ -282,7 +288,7 @@ const OrderPage = () => {
             <WrapperListOrder>
               {order?.orderedItems?.map((order) => {
                 return (
-                  <WrapperItemOrder>
+                  <WrapperItemOrder key={order?.product?.id}>
                     <div
                       style={{
                         width: "390px",
@@ -349,7 +355,7 @@ const OrderPage = () => {
                           size="small"
                           onChange={(value) => {
                             // order.amount = value;
-                            // console.log(value);
+                            // (value);
                             dispatch(setAmount({val: value, productId: order.product.id}))
                           }}
                         />
@@ -396,7 +402,7 @@ const OrderPage = () => {
                       <span>Shipping Details: </span>
                     </Col>
                     <Col span={10} style={{textAlign: 'right'}}>
-                      <span style={{ color: 'blue', cursor: 'pointer'}}>Change</span>
+                      <span onClick={handleOnChangeShippingDetail} style={{ color: 'blue', cursor: 'pointer'}}>Change</span>
                     </Col>
                   </Row>
                   <Row>
@@ -440,7 +446,7 @@ const OrderPage = () => {
                 marginBottom: "5px",
               }}
               styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-              textButton={'Check Out'}
+              textbutton={'Check Out'}
             ></ButtonComponent>
           </WrapperRight>
         </div>

@@ -99,7 +99,7 @@ const AdminProduct = () => {
     retryDelay: 1000,
   });
 
-  console.log('products query', productsQuery);
+  ('products query', productsQuery);
   
   useEffect(() => {
     if (rowSelected && isOpenDrawer) {
@@ -144,7 +144,7 @@ const AdminProduct = () => {
 
   const mutation = useMutationHook((payload) => {
     const { name, description, price, stockQuantity, type, image, discount, rating } = payload;
-    console.log(payload);
+    (payload);
     const res = ProductService.createProduct({
       name: name,
       description: description,
@@ -220,7 +220,7 @@ const AdminProduct = () => {
   }
   
   const onFinish = () => {
-    console.log("state product", stateProduct);
+    ("state product", stateProduct);
     mutation.mutate(stateProduct, {
       onSettled: () => {
         productsQuery.refetch();
@@ -242,11 +242,11 @@ const AdminProduct = () => {
         productsQuery.refetch();
       }
     });
-    console.log('ids ', {ids});
+    ('ids ', {ids});
   }
 
   const onFinishFailed = () => {
-    console.log("finish failed");
+    ("finish failed");
   };
 
   const handleOnChange = (e) => {
@@ -293,7 +293,7 @@ const AdminProduct = () => {
 
   const handleOnCategoryChange = (value) => {
     const foundObject = categories.find((obj) => obj.id === value);
-    console.log("found", foundObject);
+    ("found", foundObject);
 
     setStateProduct({
       ...stateProduct,
@@ -337,7 +337,7 @@ const AdminProduct = () => {
         type: "success",
         content: "Success",
       });
-      console.log('haha');
+      ('haha');
       handleDrawerClose();
     } else if (isErrorUpdated) {
       messageApi.open({
@@ -523,7 +523,7 @@ const AdminProduct = () => {
         }
       }),
       onFilter: (value, record) => {
-        console.log('pair ', value, record);
+        ('pair ', value, record);
         const foundObject = categories.find((obj) => obj.name === value);
         return record?.category?.name === foundObject?.name;
       },
@@ -540,7 +540,7 @@ const AdminProduct = () => {
       ...product, key: product.id
     };
   });
-  console.log(dataTable)
+  (dataTable)
   return (
     <div>
       {contextHolder}
@@ -583,7 +583,7 @@ const AdminProduct = () => {
         <LoadingComponent isLoading={isLoading}>
           <Form
             form={form}
-            name="basic"
+            name="createproductform"
             labelCol={{
               span: 6,
             }}
@@ -759,6 +759,7 @@ const AdminProduct = () => {
         </LoadingComponent>
       </ModalComponent>
       <DrawerComponent
+        forceRender
         title="Product Detail"
         isOpen={isOpenDrawer}
         onClose={handleDrawerClose}
@@ -767,7 +768,7 @@ const AdminProduct = () => {
         <LoadingComponent isLoading={isLoadingUpdated}>
           <Form
             form={updateProductForm}
-            name="basic"
+            name="updateProductForm"
             labelCol={{
               span: 6,
             }}

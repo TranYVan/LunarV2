@@ -18,7 +18,7 @@ const TableComponent = (props) => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("selectedRowkeys ", selectedRowKeys);
+      ("selectedRowkeys ", selectedRowKeys);
       setRowSelectedKeys(selectedRowKeys);
     },
     // getCheckboxProps: (record) => ({
@@ -32,7 +32,7 @@ const TableComponent = (props) => {
     const filter = columns?.filter((col) => col.dataIndex !== 'action');
     return filter;
   }, [columns]);
-  console.log('new column ', newColumnExport);
+  ('new column ', newColumnExport);
 
   const items = [
     {

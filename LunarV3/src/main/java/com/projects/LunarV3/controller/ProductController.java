@@ -83,7 +83,6 @@ public class ProductController {
 
     @PostMapping(path = "/delete-many")
     public ResponseEntity<?> deleteMany(@RequestBody List<UUID> ids) {
-        System.out.println(ids);
         try {
             productService.softDeleteMany(ids);
             return ResponseEntity.status(HttpStatus.OK).body("Delete Successfully");

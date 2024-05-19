@@ -21,7 +21,7 @@ export const getAllProducts = async (search, page = 0, size = 10) => {
 };
 
 export const createProduct = async (product) => {
-  console.log("productt ", product);
+  ("productt ", product);
 
   try {
     const res = await axios.post(
@@ -78,7 +78,7 @@ export const deleteProduct = async (id) => {
 };
 
 export const deleteManyProduct = async (data) => {
-  console.log(data);
+  (data);
   try {
     const res = await axios.post(
       `${process.env.REACT_API_URL_BACKEND}/api/v1/products/delete-many`,

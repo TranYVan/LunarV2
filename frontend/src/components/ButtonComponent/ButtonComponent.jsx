@@ -5,7 +5,7 @@ export const ButtonComponent = ({
   size,
   styleButton,
   styleTextButton,
-  textButton,
+  textbutton,
   disabled,
   ...rests
 }) => {
@@ -18,7 +18,7 @@ export const ButtonComponent = ({
       size={size} 
       // icon={<SearchOutlined style={{ color: colorButton }} />}
       {...rests}>
-      <span style={styleTextButton}>{textButton}</span>
+      <span style={styleTextButton}>{textbutton}</span>
     </Button>
   );
 };

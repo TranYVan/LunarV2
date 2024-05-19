@@ -22,6 +22,7 @@ import { resetUser } from '../../redux/slides/usersSlide';
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import Logo from "../Logo/Logo";
 import { searchProduct } from "../../redux/slides/productsSlide";
+import { resetOrder } from "../../redux/slides/orderSlide";
 
 //===
 export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) => {
@@ -39,6 +40,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
   const handleLogOut = async() => {
     setLoading(true);
     dispatch(resetUser());
+    dispatch(resetOrder());
     setLoading(false);
     navigate("/");
   }
@@ -78,7 +80,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
       <WrapperHeader style={{justifyContent: isHiddenCart && isHiddenSearch? 'space-between': 'unset' }}>
         <Col span={4} style={{cursor: "pointer"}} onClick={() => {
           navigate('/')
-          console.log('hello')
+          ('hello')
         }}>
           <Logo style={{maxHeight: '55px'}}/>
           
@@ -89,7 +91,7 @@ export const HeaderComponent = ({isHiddenSearch = false, isHiddenCart = false}) 
               onChange={onSearch}
               size="large"
               placeholder="Find anything you want"
-              textButton="Search"
+              textbutton="Search"
               
             />
           </Col>

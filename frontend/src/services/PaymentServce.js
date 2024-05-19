@@ -11,6 +11,6 @@ export const getConfig = async () => {
     );
     return res.data;
   } catch (e) {
-    throw e;
+    throw e;  
   }
 }

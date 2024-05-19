@@ -14,7 +14,7 @@ const OrderSuccess = () => {
 
   const location = useLocation();
   const {state} = location;
-  console.log('locaton order success', location);
+  ('locaton order success', location);
 
   return (
     <div style={{ background: '#f5f5fa', with: '100%', height: '100vh' }}>
@@ -40,7 +40,7 @@ const OrderSuccess = () => {
             <WrapperItemOrderInfo>
               {state?.orderItems.map((item) => {
                 return (
-                  <WrapperItemOrder>
+                  <WrapperItemOrder key={item?.product?.id}>
                     <div style={{ width: '500px', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <img src={item?.product?.thumbnails} style={{ width: '77px', height: '79px', objectFit: 'cover' }} />
                       <div style={{

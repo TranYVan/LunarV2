@@ -2,14 +2,16 @@ import React, { Fragment, useEffect, useState } from "react";
 import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import { CardComponent } from "../../components/CardComponent/CardComponent";
 import { Col, Pagination, Row } from "antd";
-import { WrapperNavbar, WrapperProducts } from "./style";
-import { useLocation } from "react-router-dom";
+import { WrapperContentContainer, WrapperContentText, WrapperLabelText, WrapperNavbar, WrapperProducts } from "./style";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as ProductService from "../../services/ProductService";
+import * as CategoryService  from "../../services/CategoryService";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
 
 const TypeProductPage = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);
@@ -20,12 +22,24 @@ const TypeProductPage = () => {
     size: 10,
     total: 1,
   });
+
+  const [categories, setCategories] = useState([]);
+  const fetchAllCategories = async() => {  
+    const res = await CategoryService.getAllCategory();
+    setCategories(res);
+    return res;
+  }
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
+  ('categories', categories);
   const fetchProductType = async (type, page, size) => {
     setLoading(true);
     const res = await ProductService.getAllProductsByCategory(type, page, size);
     if (res?.status == 200) {
       setProducts(res?.data?.content);
-      console.log("res", res);
+      ("res", res);
       setPagination({
         ...pagination,
         total: res?.data?.totalElements,
@@ -35,7 +49,7 @@ const TypeProductPage = () => {
     setLoading(false);
   };
 
-  console.log("loading", loading);
+  ("loading", loading);
 
   useEffect(() => {
     if (state){
@@ -54,14 +68,14 @@ const TypeProductPage = () => {
     return originalElement;
   };
   const onChange = (current, pageSize) => {
-    console.log(current, pageSize);
+    (current, pageSize);
     setPagination({
       ...pagination,
       page: current - 1,
       size: pageSize
     });
   };
-  console.log('pagination', pagination);
+  ('pagination', pagination);
 
   return (
     <LoadingComponent isLoading={loading}>
@@ -83,7 +97,18 @@ const TypeProductPage = () => {
             }}
           >
             <WrapperNavbar span={4}>
-              <NavbarComponent />
+              {/* <NavbarComponent /> */}
+              <div>
+                <WrapperLabelText>Category</WrapperLabelText>
+                <WrapperContentContainer>
+                  <WrapperContentText style={{cursor: 'pointer', color: state === "" ? 'rgb(244, 206, 20)' : 'black'}} onClick={() => {navigate('/');}}>All</WrapperContentText> 
+                  {categories?.map((category) => {
+                  return (
+                   <WrapperContentText style={{cursor: 'pointer', color: state === category.name ? 'rgb(244, 206, 20)' : 'black'}} onClick={() => {navigate(`/products/${category.name}`);}}>{category.name}</WrapperContentText> 
+                  )
+                })}
+                </WrapperContentContainer>
+              </div>
             </WrapperNavbar>
             <Col
               span={20}
@@ -103,7 +128,6 @@ const TypeProductPage = () => {
                 })?.map((data) => {
                   return (
                     <CardComponent
-                      key={data?.id}
                       countInStock={data?.stockQuantity}
                       description={data?.description}
                       name={data?.name}

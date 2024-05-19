@@ -90,7 +90,6 @@ public class OrderController {
     @PutMapping("/cancel/{id}")
     @JsonView(Views.ExternalView.class)
     public ResponseEntity<?> cancel(@PathVariable UUID id) {
-        System.out.println(id);
         try {
             return ResponseEntity.status(HttpStatus.OK).body(orderService.cancel(id));
         } catch (ObjectNotFoundException e) {

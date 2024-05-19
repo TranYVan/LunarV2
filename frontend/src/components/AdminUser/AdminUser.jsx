@@ -670,6 +670,7 @@ const AdminUser = () => {
         </LoadingComponent>
       </ModalComponent>
       <DrawerComponent
+        forceRender
         title="User Detail"
         isOpen={isOpenDrawer}
         onClose={handleDrawerClose}

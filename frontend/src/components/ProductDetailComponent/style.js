@@ -24,11 +24,10 @@ export const WrapperNameProduct = styled.span`
 export const WrapperPriceProduct = styled.span`
   font-style: normal;
   font-family: "Open Sans", sans-serif;
-  color: #45474b;
-  font-size: 24px;
+  color: #495E57;
+  font-size: 32px;
   font-weight: 700;
   line-height: 24px;
-  padding: 10px;
   margin-top: 25px;
   margin-bottom: 5px;
 `;
@@ -38,7 +37,7 @@ export const WrapperAmountSoldText = styled.span`
   color: #a2b5bb;
   display: flex;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 45px;
   margin-bottom: 5px;
 `;
 
@@ -50,9 +49,8 @@ export const WrapperQualityProduct = styled.div`
   border: 1px solid #B6BBC4;
   width: 99px;
   padding: 4px;
-  margin-top: 20px;
+  margin-top: 29px;
   margin-bottom: 20px;
-  margin-left: 10px;
 `;
 
 export const WrapperAddress = styled.div`
@@ -61,7 +59,6 @@ export const WrapperAddress = styled.div`
   font-weight: 550;
   line-height: 20px;
   text-wrap: nowrap;
-  padding: 10px;
   display: flex;
   gap: 12px;
   margin-top: 10px;

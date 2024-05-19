@@ -30,7 +30,7 @@ export const orderSlice = createSlice({
   initialState,
   reducers: {
     addOrderProduct: (state, action) => {
-      console.log({state, action})
+      ({state, action})
       const {orderItem} = action.payload;
       const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === orderItem.product?.id);
       if (itemOrder) {
@@ -38,6 +38,31 @@ export const orderSlice = createSlice({
       } else{
         state?.orderedItems.push(orderItem);
       }
+    },
+    resetOrder: (state, action) => {
+      state.id = "",    
+      state.user= {},
+      state.itemsPrice= 0,
+      state.shippingPrice= 0,
+      state.totalPrice= 0,
+      state.isPaid= false,
+      state.paidAt= "",
+      state.isDelivered= false,
+      state.deliveredAt= "",
+      state.isCanceled= false,
+      state.canceledAt= "",
+      state.customerName= "",
+      state.customerAddress= "",
+      state.customerCity= "",
+      state.customerCountry= "",
+      state.customerPhone= "",
+      state.description= "",
+      state.paymentMethod= "",
+      state.deliveryMethod= "",
+      state.discount= 0,
+      state.orderedItems= [],
+      state.selectedOrderedItems= []
+
     },
     setAmount: (state, action) => {
       const {val, productId} = action.payload;
@@ -47,7 +72,10 @@ export const orderSlice = createSlice({
           itemOrder.amount = val;
         }
       }
-      
+      const selectedItemOrder = state?.selectedOrderedItems?.find((item) => item?.product?.id === productId);
+      if (selectedItemOrder && selectedItemOrder.product.stockQuantity >= val && val >= 1) {
+        selectedItemOrder.amount = val;
+      }
     },
     increaseAmount: (state, action) => {
       const {productId} = action.payload;
@@ -61,7 +89,7 @@ export const orderSlice = createSlice({
       }
     },
     decreaseAmount: (state, action) => {
-      console.log('payload ', action.payload);
+      ('payload ', action.payload);
       const {productId} = action.payload;
       const itemOrder = state?.orderedItems?.find((item) => item?.product?.id === productId);
       if (itemOrder.amount > 1) {
@@ -80,7 +108,7 @@ export const orderSlice = createSlice({
       
       state.orderedItems = itemOrder;
 
-      const newSelectedOrderItems = state?.selectedOrderItems?.filter((item) => item?.product?.id !== productId);
+      const newSelectedOrderItems = state?.selectedOrderedItems?.filter((item) => item?.product?.id !== productId);
       if (newSelectedOrderItems) {
         state.selectedOrderedItems.splice(0, state.selectedOrderedItems.length, ...newSelectedOrderItems);
       }
@@ -98,7 +126,7 @@ export const orderSlice = createSlice({
     },
     selectedOrder: (state, action) => {
       const { listChecked } = action.payload;
-      console.log('list checked', listChecked);
+      ('list checked', listChecked);
       const orderItemsSelected = [];
       state?.orderedItems.forEach((order) => {
           if (listChecked.includes(order?.product?.id)) {
@@ -108,11 +136,23 @@ export const orderSlice = createSlice({
       if (orderItemsSelected) {
           state.selectedOrderedItems = [...orderItemsSelected]; 
       }
+    },
+    buyItem: (state, action) => {
+      const {product, amount} = action.payload;
+      
+      const item = {
+        product: product,
+        amount: amount,
+        price: product?.cost,
+        discount: product?.discount
+      }
+      state.selectedOrderedItems = [];
+      state.selectedOrderedItems.push(item);
     }
-  },
+  }
 });
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct, increaseAmount, decreaseAmount,setAmount, removeOrderProduct, removeAllOrderProduct,selectedOrder } = orderSlice.actions;
+export const { resetOrder, buyItem, addOrderProduct, increaseAmount, decreaseAmount,setAmount, removeOrderProduct, removeAllOrderProduct,selectedOrder } = orderSlice.actions;
 
 export default orderSlice.reducer;
