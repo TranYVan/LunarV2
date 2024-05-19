@@ -11,7 +11,7 @@ const TypeProductComponent = ({ name, key }) => {
 
   return (
     <div
-      style={{ backgroundColor: "white", cursor: "pointer" }}
+      style={{ cursor: "pointer" }}
       onClick={() =>  handleNavigateType(name)}
     >
       {name}
