@@ -21,12 +21,14 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 const AdminProduct = () => {
   const [form] = Form.useForm();
   const [updateProductForm] = Form.useForm();
+  const [createTypeForm]= Form.useForm();
 
   const [rowSelected, setRowSelected] = useState();
   const [messageApi, contextHolder] = message.useMessage();
   const [isModalOpen, setIsModelOpen] = useState(false);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+  const [isModalNewType, setIsModalNewType] = useState(false);
 
   // const [searchText, setSearchText] = useState('');
   // const [searchedColumn, setSearchedColumn] = useState('');
@@ -59,6 +61,10 @@ const AdminProduct = () => {
     rating: 0
   });
 
+  const [stateCategory, setStateCategory] = useState({
+    name: ""
+  });
+
   const fetchAllCategories = async () => {
     const res = await CategoryService.getAllCategory();
     return res;
@@ -88,7 +94,7 @@ const AdminProduct = () => {
     }
   };
 
-  const { data: categories } = useQuery(
+  const categoriesQuery = useQuery(
     ["categories"],
     fetchAllCategories,
     { retry: 3, retryDelay: 1000 }
@@ -286,7 +292,7 @@ const AdminProduct = () => {
   };
 
   const handleOnCategoryChange = (value) => {
-    const foundObject = categories.find((obj) => obj.id === value);
+    const foundObject = categoriesQuery.data.find((obj) => obj.id === value);
 
     setStateProduct({
       ...stateProduct,
@@ -298,7 +304,7 @@ const AdminProduct = () => {
   };
 
   const handleOnCategoryDetailChange = (value) => {
-    const foundObject = categories.find((obj) => obj.id === value);
+    const foundObject = categoriesQuery.data.find((obj) => obj.id === value);
 
     setStateProductDetail({
       ...stateProductDetail,
@@ -508,14 +514,14 @@ const AdminProduct = () => {
     {
       title: "Type",
       dataIndex: ["category", "name"],
-      filters: categories?.map(c => {
+      filters: categoriesQuery.data?.map(c => {
         return {
           text: c.name,
           value: c.name
         }
       }),
       onFilter: (value, record) => {
-        const foundObject = categories.find((obj) => obj.name === value);
+        const foundObject = categoriesQuery.data.find((obj) => obj.name === value);
         return record?.category?.name === foundObject?.name;
       },
     },
@@ -531,14 +537,62 @@ const AdminProduct = () => {
       ...product, key: product.id
     };
   });
-  (dataTable)
+  
+  const mutationCreateType = useMutationHook((payload) => {
+    const { name } = payload;
+    const res = CategoryService.createCategory({
+      name: name,
+      status: "AVAILABLE"
+    });
+    
+    return res;
+  });
+  
+  const {isSuccess: isCreateTypeSuccessfully, isError: isCreateTypeError, data: dataCreateType} = mutationCreateType;
+
+  useEffect(() =>{
+    if (isCreateTypeSuccessfully) {
+      messageApi.success("Create new type successfully");
+      setIsModalNewType(false);
+    } else if (isCreateTypeError) {
+      messageApi.error("Create new type fail");
+    }
+  }, [isCreateTypeSuccessfully, isCreateTypeError])
+
+  const onFinishCreateType = () => {
+    mutationCreateType.mutate(stateCategory, {
+      onSettled: () => {
+        categoriesQuery.refetch();
+      }
+    });
+  };
+
+  const handleCancelCreateType = () => {
+    setIsModalNewType(false);
+    setStateCategory({name: ""});
+    createTypeForm.resetFields();
+  }
+  useEffect(() => {
+    createTypeForm.setFieldsValue(stateCategory);
+  }, [createTypeForm, stateCategory]);
+
+  const handleOnChangeType = (e) => {
+    setStateCategory({
+      ...stateCategory,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <div>
       {contextHolder}
       <WrapperHeader>Product Tracking</WrapperHeader>
-      <div style={{ marginTop: "25px" }}>
+      <div style={{ marginTop: "25px", display: "flex", gap: "16px" }}>
         <WrapperAddUserButton onClick={() => setIsModelOpen(true)}>
           <PlusOutlined style={{ fontSize: "50px" }} />
+        </WrapperAddUserButton>
+        <WrapperAddUserButton onClick={() => setIsModalNewType(true)}>
+          <img width="48" height="48" src="https://img.icons8.com/material-rounded/24/add-property.png" alt="add-property"/>
         </WrapperAddUserButton>
       </div>
 
@@ -564,6 +618,53 @@ const AdminProduct = () => {
           }}
         />
       </div>
+      <ModalComponent
+        forceRender
+        title="Create new product type"
+        isOpen={isModalNewType}
+        onCancel={handleCancelCreateType}
+        footer={null}
+      >
+        <Form
+          name="createnewtype"
+          form={createTypeForm}
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 18,
+          }}
+          style={{
+            maxWidth: 600,
+          }}
+          onFinish={onFinishCreateType}
+        >
+          <Form.Item 
+            label="Type" 
+            name="name"
+            rules={[
+              {
+                required: false,
+              },
+            ]}  
+          >
+            <InputFormComponent
+              value={stateCategory.name}
+              onChange={handleOnChangeType}
+              name="name"
+            />
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 6, span: 18 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ backgroundColor: "#495E57" }}
+            >
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </ModalComponent>
       <ModalComponent
         forceRender
         title="Create new product"
@@ -633,7 +734,7 @@ const AdminProduct = () => {
             >
               <Select
                 onChange={handleOnCategoryChange}
-                options={categories?.map((category) => {
+                options={categoriesQuery.data?.map((category) => {
                   return {
                     value: category?.id,
                     label: category?.name,
@@ -820,7 +921,7 @@ const AdminProduct = () => {
             >
               <Select
                 onChange={handleOnCategoryDetailChange}
-                options={categories?.map((category) => {
+                options={categoriesQuery.data?.map((category) => {
                   return {
                     value: category?.id,
                     label: category?.name,
